@@ -1,0 +1,228 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+@font-face {
+    font-family: "Arial";
+    src: local("Arial"),
+        url("./fonts/arialmt.ttf") format("truetype");
+    font-weight: normal;
+}
+
+#root {
+    font-family: "Arial";
+    line-height: 25px;
+}
+
+body {
+    background-color: #f0f0f0;
+}
+
+::-webkit-scrollbar {
+    /* chrome based */
+    width: 0px;
+    /* ширина scrollbar'a */
+    background: transparent;
+    /* опционально */
+}
+
+html {
+    -ms-overflow-style: none;
+    /* IE 10+ */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.header {
+    background-color: #90E0EF;
+}
+
+.header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo img {
+    width: 80px;
+    height: auto;
+}
+
+.header-logo-name {
+    font-size: 22px;
+    padding: 0 10px;
+    font-weight: 600;
+}
+
+.header-navbar a {
+    padding: 0 15px;
+    text-decoration: none;
+    color: #000;
+}
+
+.heder-profile {
+    display: flex;
+    align-items: center;
+}
+
+.heder-profile img {
+    width: 40px;
+    height: auto;
+    border-radius: 50%;
+}
+
+.header-profile-name {
+    font-size: 16px;
+    padding: 0 10px;
+}
+
+.header-navbar span {
+    text-decoration: none;
+    color: #00000060;
+    padding: 0 15px;
+    font-size: 16px;
+}
+
+
+
+
+.rpd-template-main {
+    width: 1200px;
+    margin: 0 auto;
+    display: flex;
+}
+
+.rpd-template-list {
+    background-color: #03045E;
+    min-width: 400px;
+    max-width: 400px;
+    height: 500px;
+    margin: 20px 10px 20px 0;
+    border-radius: 2%;
+    position: sticky;
+    top: 20px;
+}
+
+.rpd-template-list-title {
+    padding: 20px 10px;
+    color: #fff;
+    font-size: 24px;
+}
+
+.rpd-template-list-ul {
+    padding: 0 10px;
+    list-style-type: none;
+}
+
+.rpd-template-list-ul li {
+    padding: 5px 0;
+}
+
+.rpd-template-list-ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+}
+
+.rpd-template-list-ul li a:hover {
+    color: #CAF0F8;
+    text-decoration: underline;
+}
+
+.rpd-template-content {
+    background-color: #CAF0F8;
+    margin: 20px 0 20px 10px;
+    padding: 10px;
+    border-radius: 2%;
+    width: 100%;
+}
+
+.rpd-template-content div {
+    margin-bottom: 10px;
+}
+
+.rpd-template-content p {
+    margin-bottom: 10px;
+}
+
+
+
+
+
+.manager-main {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.manager-content {
+    background-color: #CAF0F8;
+    margin: 20px 0 20px 10px;
+    padding: 20px;
+    border-radius: 2%;
+    width: 100%;
+}
+
+.manager-content h2 {
+    padding: 20px 0;
+}
+
+.manager-line {
+    margin: 20px;
+    color: #f0f0f0;
+}
+
+
+
+.selector {
+    padding: 5px;
+    width: 50%;
+    margin: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.table {
+    border: 1px solid grey;
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.table th {
+    font-weight: bold;
+    padding: 5px;
+    background: #efefef;
+    border: 1px solid grey;
+}
+
+.table td {
+    padding: 5px 10px;
+    border: 1px solid grey;
+    text-align: left;
+}
+
+.table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #F7F7F7;
+}
+
+table div {
+    width: 100%;
+    min-height: 50px;
+    margin: 0 !important;
+}
+
+table div:hover {
+    background: #dddddd;
+}
