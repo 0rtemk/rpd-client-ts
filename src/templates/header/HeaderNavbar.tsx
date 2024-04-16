@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SyntheticEvent, FC } from 'react';
 import { Link } from 'react-router-dom';
 import useStore from '../../store/store';
 import { Tab, Tabs} from '@mui/material';
 import { BorderColor, Description, ListAlt } from '@mui/icons-material';
 
-function HeaderNavbar() {
+const HeaderNavbar: FC = () => {
     const { jsonData } = useStore();
-    const [value, setValue] = useState(location.pathname);
-    const [isTeacherInterface, setIsTeacherInterface] = useState(true);
+    const [value, setValue] = useState<string>(location.pathname);
+    const [isTeacherInterface, setIsTeacherInterface] = useState<boolean>(true);
 
     useEffect(() => {
         Object.keys(jsonData).length ? setIsTeacherInterface(false) : setIsTeacherInterface(true);
     }, [jsonData]);
 
-    const handleChange = (event, newValue) => {
+    const handleChange = (event: SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
 

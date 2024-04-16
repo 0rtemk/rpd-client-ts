@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
-import logo from '/src/images/gu-dubna.png'
+import { FC } from 'react';
 
-function HeaderLogo() {
+const HeaderLogo: FC = () => {
     return (
         <Box sx={{ px: 1 }}>
             <Typography 

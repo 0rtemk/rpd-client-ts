@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState, MouseEvent, FC } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Button, Menu, MenuItem, ListItemIcon, ListItemText, Typography, Divider } from '@mui/material';
 import { BorderColor, Description, ListAlt, AccountCircle, Logout } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import useStore from '../../store/store';
 
-function HeaderMenuMobile() {
-    const [anchorEl, setAnchorEl] = useState(null);
+const HeaderMenuMobile: FC = () => {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null);
     const { jsonData } = useStore();
     const open = Boolean(anchorEl);
 
-    const handleClick = (event) => {
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {

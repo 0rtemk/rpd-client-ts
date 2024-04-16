@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, FC } from 'react';
 import { Button, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -9,31 +9,34 @@ import useStore from '../../../store/store';
 import Loader from '../../../helperComponents/Loader';
 import TextEditor from './TextEditor';
 
-export default function JsonChangeValue({ elementName }) {
+interface JsonChangeValue {
+    elementName: string;
+}
+
+const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
     const fileName = "ivt_bakalavr" //change this later
     const { updateJsonData } = useStore();
     const elementValue = useStore.getState().jsonData[elementName];
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [changeableValue, setChangeableValue] = useState(elementValue);
-    const textAreaRef = useRef(null);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [changeableValue, setChangeableValue] = useState<string>(elementValue);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
-    const handleSaveClick = async () => {
+    const saveContent = async (htmlValue: string) => {
         setIsEditing(false);
-        const value = textAreaRef.current.value;
 
         try {
             const response = await axios.put(`/api/update-json-value/${fileName}`, {
                 fieldToUpdate: elementName,
-                value: value
+                value: htmlValue
             });
 
-            updateJsonData(elementName, value)
-            setChangeableValue(value);
+            updateJsonData(elementName, htmlValue)
+            setChangeableValue(htmlValue);
         } catch (error) {
             console.error(error);
         }
@@ -76,23 +79,23 @@ export default function JsonChangeValue({ elementName }) {
     return (
         <>
             {isEditing ? (
-                <Box>
-                    <TextareaAutosize
-                        ref={textAreaRef}
-                        aria-label="empty textarea"
-                        placeholder="Empty"
-                        id={elementName}
-                        defaultValue={changeableValue}
-                        sx={{my: 1}}
-                    />
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        endIcon={<SaveAltIcon color='primary' />}
-                        onClick={() => handleSaveClick()}
-                    >сохранить изменения</Button>
-                </Box>
-                // <TextEditor />
+                // <Box>
+                //     <TextareaAutosize
+                //         ref={textAreaRef}
+                //         aria-label="empty textarea"
+                //         placeholder="Empty"
+                //         id={elementName}
+                //         defaultValue={changeableValue}
+                //         sx={{my: 1}}
+                //     />
+                //     <Button
+                //         variant="outlined"
+                //         size="small"
+                //         endIcon={<SaveAltIcon color='primary' />}
+                //         onClick={() => handleSaveClick()}
+                //     >сохранить изменения</Button>
+                // </Box>
+                <TextEditor value={changeableValue} saveContent={saveContent}/>
             ) : (
                 <Box>
                     <Box dangerouslySetInnerHTML={{ __html: changeableValue }} sx={{py: 1}}></Box>
@@ -106,4 +109,6 @@ export default function JsonChangeValue({ elementName }) {
             )}
         </>
     );
-};
+}
+
+export default JsonChangeValue;
