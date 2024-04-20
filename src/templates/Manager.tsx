@@ -30,7 +30,7 @@ export default function Manager() {
             >
                 <Box component='h2' sx={{ py: 1 }}>Подготовка комплекта РПД функционал РОП</Box>
 
-                <Box sx={{ py: 1 }}>
+                <Box sx={{ py: 1, maxWidth: "500px"}}>
                     <Selectors />
                 </Box>
                 <Divider />

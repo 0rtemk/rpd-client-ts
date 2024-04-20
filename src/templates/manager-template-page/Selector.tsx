@@ -1,32 +1,36 @@
-import { useState } from 'react';
+// Selector.tsx
+import { Box } from '@mui/material';
+import React from 'react';
+import Select, { ActionMeta, SingleValue } from 'react-select';
 
-const Selector = ({title, options, onSelect }) => {
-    const [selectedOption, setSelectedOption] = useState('');
+interface OptionType {
+    label: string;
+    value: string;
+}
 
-    const handleSelect = (event) => {
-        const value = event.target.value;
-        setSelectedOption(value);
-        onSelect(value);
-    };
+interface CustomSelector {
+    title: string;
+    placeholder: string;
+    value: OptionType | undefined;
+    onChange: (selectedOption: SingleValue<OptionType>, actionMeta: ActionMeta<OptionType>) => void;
+    options: OptionType[];
+}
 
-    if(options.length == 0) return (
-        <div>
-            <h3>{title}</h3>
-            <div className='error-message'>Ошибка загрузки данных. Выберите другие опции или обратитесь к администатору</div>
-        </div>
-    );
-
+const CustomSelector: React.FC<CustomSelector> = ({ title, placeholder, value, onChange, options }) => {
     return (
-        <div>
-            <h3>{title}</h3>
-            <select className='selector' value={selectedOption} onChange={handleSelect}>
-                <option value="">Выберите</option>
-                {options.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                ))}
-            </select>
-        </div>
+        <Box sx={{ my: 1 }}>
+            <Box sx={{fontSize: "20px", fontWeight: "600", py: 1}}>
+                {title}
+            </Box>
+            <Select
+                placeholder={placeholder}
+                isClearable
+                value={value}
+                onChange={onChange}
+                options={options}
+            />
+        </Box>
     );
 };
 
-export default Selector;
+export default CustomSelector;

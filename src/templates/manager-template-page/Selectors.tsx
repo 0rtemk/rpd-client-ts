@@ -1,125 +1,189 @@
-import { useState, useEffect } from 'react'
-import Selector from './Selector'
+import { useState, useEffect, FC } from 'react';
+import { ActionMeta, SingleValue } from 'react-select';
+import Select from 'react-select';
+import Selector from './Selector';
 import FindRpdTemplates from './FindRpdTemplates';
+import Loader from '../../helperComponents/Loader';
+import { Box } from '@mui/material';
 
-const Selectors = () => {
-    const [institute, setInstitute] = useState(null);
-    const [level, setLevel] = useState(null);
-    const [direction, setDirection] = useState(null);
-    const [educationForm, setEducationForm] = useState(null);
-    const [enrollmentYear, setEnrollmentYear] = useState(null);
-    const [educationYear, setEducationYear] = useState(null);
+interface OptionType {
+    label: string;
+    value: string;
+}
 
-    const [data, setData] = useState(null);
+interface JsonData {
+    [key: string]: string | JsonData;
+}
+
+type Nullable<T> = T | undefined;
+
+interface SelectorsState {
+    faculty: Nullable<OptionType>;
+    levelEducation: Nullable<OptionType>;
+    directionOfStudy: Nullable<OptionType>;
+    profile: Nullable<OptionType>;
+    formEducation: Nullable<OptionType>;
+    year: Nullable<OptionType>;
+}
+
+const Selectors: FC = () => {
+    const [selectors, setSelectors] = useState<SelectorsState>({
+        faculty: undefined,
+        levelEducation: undefined,
+        directionOfStudy: undefined,
+        profile: undefined,
+        formEducation: undefined,
+        year: undefined
+    });
+
+    const [data, setData] = useState<Nullable<JsonData>>(undefined);
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('./json_profiles.json', {
+            const response = await fetch('/json_profiles.json', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 }
             });
-            const jsonData = await response.json();
-            setData(jsonData);
+
+            if (response.ok) {
+                const jsonData: JsonData = await response.json();
+                setData(jsonData);
+            } else {
+                console.error('Error fetching the data');
+            }
         };
 
         fetchData();
     }, []);
 
-    const setInstituteValue = (value) => {
-        setInstitute(value);
-        setLevel(null);
-        setDirection(null);
-        setEducationForm(null);
-        setEnrollmentYear(null);
-    }
+    const handleChange = (name: keyof SelectorsState) => (
+        selectedOption: SingleValue<OptionType>,
+        actionMeta: ActionMeta<OptionType>
+      ) => {
+        console.log(`Action: ${actionMeta.action}`);
+      
+        setSelectors(prevSelectors => ({
+          ...prevSelectors,
+          [name]: selectedOption || undefined,
+          ...(name === 'faculty' && { levelEducation: undefined, directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
+          ...(name === 'levelEducation' && { directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
+          ...(name === 'directionOfStudy' && { profile: undefined, formEducation: undefined, year: undefined }),
+          ...(name === 'profile' && { formEducation: undefined, year: undefined }),
+          ...(name === 'formEducation' && { year: undefined }),
+        }));
+      };
 
-    const setLevelValue = (value) => {
-        setLevel(value);
-        setDirection(null);
-        setEducationForm(null);
-        setEnrollmentYear(null);
-    }
+    const getOptions = (): OptionType[] => {
+        return data
+            ? Object.keys(data).map(key => ({ label: key, value: key }))
+            : [];
+    };
 
-    const setDirectionValue = (value) => {
-        setDirection(value);
-        setEducationForm(null);
-        setEnrollmentYear(null);
-    }
+    const getOptionsForSelector = (data: JsonData, selectorPath: Array<string>, indicator?: string): OptionType[] => {
+        let currentData = data;
 
-    const setEducationFormValue = (value) => {
-        setEducationForm(value);
-        setEnrollmentYear(null);
-    }
+        for (const key of selectorPath) {
+            currentData = currentData[key] as JsonData;
+            if (!currentData) {
+                return [];
+            }
+        }
 
-    const setEnrollmentYearValue = (value) => {
-        setEnrollmentYear(value);
-    }
+        console.log(currentData);
+        if(indicator && indicator === 'lastChild') return Object.entries(currentData).map(([key, value]) => ({ label: String(value), value: String(value) }));
+        return Object.keys(currentData).map(key => ({ label: key, value: key }));
+    };
 
-    const setEducationYearValue= (value) => {
-        setEducationYear(value)
-    }
-
-
-    if (!data) {
-        return <div>Loading...</div>
-    }
+    if (!data) return <Loader />
 
     return (
-        <div>
-            <Selector
-                title="Подразделение (институт или факультет)"
-                options={Object.keys(data)}
-                onSelect={setInstituteValue}
+        <>
+            <Box sx={{fontSize: "20px", fontWeight: "600", py: 1}}>Институт</Box>
+            <Select
+                placeholder="Выберите институт"
+                isClearable
+                value={selectors.faculty}
+                onChange={handleChange('faculty')}
+                options={getOptions()}
             />
-            {institute && (
+            {selectors.faculty && (
                 <Selector
                     title="Уровень образования"
-                    options={Object.keys(data[institute])}
-                    onSelect={setLevelValue}
+                    placeholder="Выберите уровень образования"
+                    value={selectors.levelEducation}
+                    onChange={handleChange('levelEducation')}
+                    options={getOptionsForSelector(data, [
+                        selectors.faculty.value
+                    ])}
                 />
             )}
-            {level && (
+            {selectors.faculty && selectors.levelEducation && (
                 <Selector
-                    title="Образовательная программа (направление)"
-                    options={Object.keys(data[institute][level])}
-                    onSelect={setDirectionValue}
+                    title="Направление обучения"
+                    placeholder="Выберите направление обучения"
+                    value={selectors.directionOfStudy}
+                    onChange={handleChange('directionOfStudy')}
+                    options={getOptionsForSelector(data, [
+                        selectors.faculty.value, 
+                        selectors.levelEducation.value
+                    ])}
                 />
             )}
-            {direction && (
+            {selectors.faculty && selectors.levelEducation && selectors.directionOfStudy && (
                 <Selector
-                    title="Профиль"
-                    options={Object.keys(data[institute][level][direction])}
-                    onSelect={setEducationFormValue}
+                    title="Профиль направления обучения"
+                    placeholder="Выберите профиль обучения"
+                    value={selectors.profile}
+                    onChange={handleChange('profile')}
+                    options={getOptionsForSelector(data, [
+                        selectors.faculty.value, 
+                        selectors.levelEducation.value, 
+                        selectors.directionOfStudy.value
+                    ])}
                 />
             )}
-            {educationForm && (
+            {selectors.faculty && selectors.levelEducation && selectors.directionOfStudy && selectors.profile && (
                 <Selector
                     title="Форма обучения"
-                    options={Object.keys(data[institute][level][direction][educationForm])}
-                    onSelect={setEnrollmentYearValue}
+                    placeholder="Выберите форму обучения"
+                    value={selectors.formEducation}
+                    onChange={handleChange('formEducation')}
+                    options={getOptionsForSelector(data, [
+                        selectors.faculty.value, 
+                        selectors.levelEducation.value, 
+                        selectors.directionOfStudy.value, 
+                        selectors.profile.value
+                    ])}
                 />
             )}
-            {enrollmentYear && (
+            {selectors.faculty && selectors.levelEducation && selectors.directionOfStudy && selectors.profile && selectors.formEducation && (
                 <Selector
                     title="Год набора"
-                    options={Object.values(data[institute][level][direction][educationForm][enrollmentYear])}
-                    onSelect={setEducationYearValue}
+                    placeholder="Выберите год набора"
+                    value={selectors.year}
+                    onChange={handleChange('year')}
+                    options={getOptionsForSelector(data, [
+                        selectors.faculty.value, 
+                        selectors.levelEducation.value, 
+                        selectors.directionOfStudy.value, 
+                        selectors.profile.value, 
+                        selectors.formEducation.value
+                    ], 'lastChild')}
                 />
             )}
-            {educationYear && 
-                <FindRpdTemplates 
-                    institute={institute} 
-                    level={level} 
-                    direction={direction} 
-                    educationForm={educationForm} 
-                    enrollmentYear={enrollmentYear} 
-                    educationYear={educationYear}
+            {/* {selectors.year && (
+                <FindRpdTemplates
+                    faculty={selectors.faculty}
+                    levelEducation={selectors.levelEducation}
+                    directionOfStudy={selectors.directionOfStudy}
+                    profile={selectors.profile}
+                    formEducation={selectors.formEducation}
+                    year={selectors.year}
                 />
-            }
-        </div>
+            )} */}
+        </>
     );
 };
-
 export default Selectors;
