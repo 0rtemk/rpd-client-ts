@@ -4,7 +4,8 @@ import Select from 'react-select';
 import Selector from './Selector';
 import FindRpdTemplates from './FindRpdTemplates';
 import Loader from '../../helperComponents/Loader';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import useStore from '../../store/store';
 
 interface OptionType {
     label: string;
@@ -26,7 +27,11 @@ interface SelectorsState {
     year: Nullable<OptionType>;
 }
 
-const Selectors: FC = () => {
+interface Selectors {
+    setChoise: (value: string) => void;
+}
+
+const Selectors: FC<Selectors> = ({ setChoise }) => {
     const [selectors, setSelectors] = useState<SelectorsState>({
         faculty: undefined,
         levelEducation: undefined,
@@ -37,6 +42,7 @@ const Selectors: FC = () => {
     });
 
     const [data, setData] = useState<Nullable<JsonData>>(undefined);
+    const { setSelectedTemplateData } = useStore();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -96,10 +102,24 @@ const Selectors: FC = () => {
         return Object.keys(currentData).map(key => ({ label: key, value: key }));
     };
 
+    const saveTemplateData = () => {
+        setSelectedTemplateData(
+            selectors.faculty?.value,
+            selectors.levelEducation?.value,
+            selectors.directionOfStudy?.value,
+            selectors.profile?.value,
+            selectors.formEducation?.value,
+            selectors.year?.value
+        )
+
+        setChoise("workingType")
+    }
+
     if (!data) return <Loader />
 
     return (
-        <>
+        <Box sx={{ py: 1, maxWidth: "500px"}}>
+            <Box>Шаг 1. Выбор данных</Box>
             <Box sx={{fontSize: "20px", fontWeight: "600", py: 1}}>Институт</Box>
             <Select
                 placeholder="Выберите институт"
@@ -183,7 +203,10 @@ const Selectors: FC = () => {
                     year={selectors.year}
                 />
             )} */}
-        </>
+            {selectors.year && (
+                <Button variant="outlined" onClick={saveTemplateData}>Продолжить</Button>
+            )}
+        </Box>
     );
 };
 export default Selectors;

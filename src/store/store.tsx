@@ -7,14 +7,40 @@ interface JsonData {
   [key: string]: JsonValue;
 }
 
-interface StoreState {
-  jsonData: JsonData;
-  setJsonData: (data: JsonData) => void;
-  updateJsonData: (key: string, value: JsonValue) => void;
+interface SelectedTemplateData {
+  faculty: string | undefined;
+  levelEducation: string | undefined;
+  directionOfStudy: string | undefined;
+  profile: string | undefined;
+  formEducation: string | undefined;
+  year: string | undefined;
 }
 
-const useStore = create<StoreState> () (immer((set) => ({
+interface StoreState {
+  jsonData: JsonData;
+  selectedTemplateData: SelectedTemplateData;
+  setJsonData: (data: JsonData) => void;
+  updateJsonData: (key: string, value: JsonValue) => void;
+  setSelectedTemplateData: (
+    faculty: string | undefined,
+    levelEducation: string | undefined,
+    directionOfStudy: string | undefined,
+    profile: string | undefined,
+    formEducation: string | undefined,
+    year: string | undefined
+  ) => void;
+}
+
+const useStore = create<StoreState>()(immer((set) => ({
   jsonData: {},
+  selectedTemplateData: {
+    faculty: undefined,
+    levelEducation: undefined,
+    directionOfStudy: undefined,
+    profile: undefined,
+    formEducation: undefined,
+    year: undefined
+  },
   setJsonData: (data) => {
     set((state) => {
       state.jsonData = data;
@@ -26,6 +52,20 @@ const useStore = create<StoreState> () (immer((set) => ({
         state.jsonData[key] = value;
       } else {
         delete state.jsonData[key];
+      }
+    });
+  },
+  setSelectedTemplateData: (faculty, levelEducation, directionOfStudy, profile, formEducation, year) => {
+    set((state) => {
+      if (faculty && levelEducation && directionOfStudy && profile && formEducation && year) {
+        state.selectedTemplateData = {
+          faculty: faculty,
+          levelEducation: levelEducation,
+          directionOfStudy: directionOfStudy,
+          profile: profile,
+          formEducation: formEducation,
+          year: year
+        }
       }
     });
   }
