@@ -15,7 +15,6 @@ interface SelectorOption {
     value: string;
 }
 
-// Пример объекта с опциями для селекторов
 const selectorOptions = {
     workType: [
         { label: 'Создание нового шаблона РПД', value: 'create' },
@@ -23,14 +22,8 @@ const selectorOptions = {
     ],
     creationType: [
         { label: 'На основе выгрузки 1C', value: '1c' },
-        { label: 'На основе шаблона прошлого года', value: 'previousYearTemplate' },
+        { label: 'На основе шаблона выбранного года', value: 'currentYearTemplate' },
         { label: 'На основе шаблона другого института', value: 'otherInstituteTemplate' },
-    ],
-    year: [
-        { label: '2023', value: '2023' },
-        { label: '2022', value: '2022' },
-        { label: '2021', value: '2021' },
-        { label: '2020', value: '2020' },
     ],
     institute: [
         { label: 'Институт системного анализа и управления', value: 'ISAU' },
@@ -55,7 +48,6 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
     const [selected, setSelected] = useState({
         workType: '',
         creationType: '',
-        year: '',
         institute: '',
     });
 
@@ -63,8 +55,8 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
         setSelected(prev => ({
             ...prev,
             [name]: event.target.value,
-            ...(name === 'workType' && { creationType: '', year: '', institute: '' }),
-            ...(name === 'creationType' && { year: '', institute: '' }),
+            ...(name === 'workType' && { creationType: '', institute: '' }),
+            ...(name === 'creationType' && { institute: '' }),
         }));
     };
 
@@ -75,7 +67,7 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
         dependsOn?: keyof typeof selected
     ) => {
         if (dependsOn && !selected[dependsOn]) {
-            return null; // Не рендерим этот селектор, если нет значения в родительском селекторе
+            return null;
         }
 
         return (
@@ -85,7 +77,7 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
                     value={selected[name]}
                     label={label}
                     onChange={handleSelectChange(name)}
-                    key={name}  // Предоставляем уникальный ключ
+                    key={name}
                 >
                     {options.map(option => (
                         <MenuItem key={option.value} value={option.value}>
@@ -100,11 +92,16 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
     const allSelectorsFilled = selected.workType && (
         selected.workType !== 'create' ||
         (selected.workType === 'create' && selected.creationType && (
-            (selected.creationType !== 'previousYearTemplate' || (selected.creationType === 'previousYearTemplate' && selected.year)) &&
+            (selected.creationType !== 'currentYearTemplate' || selected.creationType === 'currentYearTemplate') &&
             (selected.creationType !== 'otherInstituteTemplate' || (selected.creationType === 'otherInstituteTemplate' && selected.institute))
         ))
     );
 
+    const setSelectType = () => {
+        console.log(selected);
+        if (selected.workType === 'edit') setChoise("changeTemplate");
+        if (selected.workType === 'create' && selected.creationType === 'currentYearTemplate') setChoise("createTemplateFromCurrentYear");
+    }
 
     return (
         <>
@@ -119,11 +116,10 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
             <Box width={450}>
                 {renderSelector('workType', 'Выберите тип работы с РПД', selectorOptions.workType)}
                 {selected.workType === 'create' && renderSelector('creationType', 'Выберите тип создания РПД', selectorOptions.creationType)}
-                {selected.creationType === 'previousYearTemplate' && renderSelector('year', 'Выберите год набора', selectorOptions.year)}
                 {selected.creationType === 'otherInstituteTemplate' && renderSelector('institute', 'Выберите институт', selectorOptions.institute)}
             </Box>
             {allSelectorsFilled && (
-                <Button variant="outlined">
+                <Button variant="outlined" onClick={setSelectType}>
                     Продолжить
                 </Button>
             )}

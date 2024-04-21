@@ -97,7 +97,6 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
             }
         }
 
-        console.log(currentData);
         if(indicator && indicator === 'lastChild') return Object.entries(currentData).map(([key, value]) => ({ label: String(value), value: String(value) }));
         return Object.keys(currentData).map(key => ({ label: key, value: key }));
     };

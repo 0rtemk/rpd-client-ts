@@ -1,8 +1,9 @@
 import Selectors from "./manager-template-page/Selectors";
 import TemplateConstructor from "./manager-template-page/TemplateConstructor";
-import JsonParser from "../store/JsonParser";
 import { Container, Box } from '@mui/material';
 import { useState } from "react";
+import ChangeRpdTemplate from "./manager-template-page/steps/ChangeRpdTemplate";
+import CreateRpdTemplateFromYear from "./manager-template-page/steps/CreateRpdTemplateFromYear";
 
 
 //тут вообще свалка пока
@@ -17,9 +18,6 @@ export default function Manager() {
                 justifyContent: 'space-between'
             }}
         >
-
-            <JsonParser profileServerKey="ivt_bakalavr" />
-
             <Box
                 my={4}
                 p={2}
@@ -36,6 +34,12 @@ export default function Manager() {
                 )}
                 {choise === "workingType" && (
                     <TemplateConstructor setChoise={setChoise} />
+                )}
+                {choise === "changeTemplate" && (
+                    <ChangeRpdTemplate setChoise={setChoise} />
+                )}
+                {choise === "createTemplateFromCurrentYear" && (
+                    <CreateRpdTemplateFromYear setChoise={setChoise} />
                 )}
             </Box>
         </Container>
