@@ -4,23 +4,14 @@ import { FC, useState } from 'react';
 import EditableCell from "./changeable-elements/EditableCell";
 import { Box, Button, ButtonGroup, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
 import Loader from "../../helperComponents/Loader";
-
-interface DisciplineContent {
-    competence: string;
-    indicator: string;
-    results: string;
-}
-
-interface DisciplineContentData {
-    [id: string]: DisciplineContent;
-}
+import { PlannedResultsData } from "../types/DisciplineContentPageTypes";
 
 const PlannedResultsPage: FC = () => {
-    const initialData = useStore.getState().jsonData.competencies as DisciplineContentData | undefined;
+    const initialData = useStore.getState().jsonData.competencies as PlannedResultsData | undefined;
     const initialDataLength = initialData ? Object.keys(initialData).length : 0;
 
     const { updateJsonData } = useStore();
-    const [data, setData] = useState<DisciplineContentData | undefined>(initialData);
+    const [data, setData] = useState<PlannedResultsData | undefined>(initialData);
     const [nextId, setNextId] = useState<number>(initialDataLength);
 
     const handleAddRow = () => {
@@ -47,7 +38,7 @@ const PlannedResultsPage: FC = () => {
         //change this later
         const fileName = "ivt_bakalavr";
 
-        const filteredData = Object.entries(data).reduce((acc: DisciplineContentData, [key, value]) => {
+        const filteredData = Object.entries(data).reduce((acc: PlannedResultsData, [key, value]) => {
             if (value.competence || value.indicator || value.results) {
                 acc[key] = value;
             }

@@ -1,96 +1,45 @@
-import { Link, Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import { Container, Box } from '@mui/material';
-import RpdList from './teacher-interface-page/RpdList/RpdList';
+import RpdList from './RpdList/RpdList';
 import { FC } from 'react';
+import { RpdListItems } from './constants/teacherInterfaceItems';
 
-interface RpdListItems {
-    href: string;
-    text: string;
-}
+import AimsPage from './teacher-interface-page/AimsPage';
+import ApprovalPage from './teacher-interface-page/ApprovalPage';
+import CoverPage from './teacher-interface-page/CoverPage';
+import DisciplineContentPage from './teacher-interface-page/DisciplineContentPage';
+import DisciplineEvaluationsFunds from './teacher-interface-page/DisciplineEvaluationsFunds';
+import DisciplinePlace from './teacher-interface-page/DisciplinePlace';
+import DisciplineSupportPage from './teacher-interface-page/DisciplineSupportPage';
+import PlannedResultsPage from './teacher-interface-page/PlannedResultsPage';
+import ResourceSupportPage from './teacher-interface-page/ResourceSupportPage';
+import ScopeDisciplinePage from './teacher-interface-page/ScopeDisciplinePage';
+import TestPdf from './teacher-interface-page/pdf-page/TestPdf';  // Assuming PDF Test view
 
 const TeacherInterface: FC = () => {
-    const RpdListItems: RpdListItems[] = [
-        {
-            href: "/teacher-interface/cover-page",
-            text: "Титульный лист"
-        },
-        {
-            href: "/teacher-interface/approval-page",
-            text: "Лист согласования"
-        },
-        {
-            href: "/teacher-interface/aims-page",
-            text: "Цели и задачи освоения дисциплины"
-        },
-        {
-            href: "/teacher-interface/discipline-place",
-            text: "Место дисциплины в структуре ОПОП"
-        },
-        {
-            href: "/teacher-interface/discipline-planned-results",
-            text: "Планируемые результаты обучения по дисциплине (модулю)"
-        },
-        {
-            href: "/teacher-interface/discipline-scope",
-            text: "Объем дисциплины"
-        },
-        {
-            href: "/teacher-interface/discipline-content",
-            text: "Содержание дисциплины"
-        },
-        {
-            href: "/teacher-interface/discipline-support",
-            text: "Перечень учебно-методического обеспечения по дисциплине"
-        },
-        {
-            href: "/teacher-interface/discipline-evaluations-funds",
-            text: "Фонды оценочных средств по дисциплине"
-        },
-        {
-            href: "/teacher-interface/resource-support",
-            text: "Ресурсное обеспечение"
-        }
-    ]
+    const [choise, setChoise] = useState<string>("coverPage");
 
     return (
-        <Container 
-            maxWidth="xl"
-            sx={{
-                display: 'flex',
-                justifyContent: 'space-between'
-            }}
-        >
-            <Box
-                minWidth={400}
-                maxWidth={400}
-                my={4}
-                mr={2}
-            >
-                <Box
-                    height={550}
-                    py={1}
-                    sx={{
-                        position: "sticky",
-                        top: "20px",
-                        backgroundColor: '#fefefe'
-                    }}
-                >
-                    <RpdList RpdList={RpdListItems}/>
-                    <Box>
-                        <Link to="/teacher-interface/test-pdf">Тест отпраки pdf</Link>
-                    </Box>
+        <Container maxWidth="xl" sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box minWidth={400} maxWidth={400} my={4} mr={2}>
+                <Box height={550} py={1} sx={{ position: "sticky", top: "20px", backgroundColor: '#fefefe' }}>
+                    <RpdList RpdListItems={RpdListItems} setChoise={setChoise}/>
                 </Box>
             </Box>
-            <Box
-                my={4}
-                p={2}
-                ml={2}
-                sx={{ backgroundColor: '#fefefe', width: "100%"}}
-            >
-                <Outlet />
+            <Box my={4} p={2} ml={2} sx={{ backgroundColor: '#fefefe', width: "100%"}}>
+                {choise === "coverPage" && <CoverPage />}
+                {choise === "approvalPage" && <ApprovalPage />}
+                {choise === "aimsPage" && <AimsPage />}
+                {choise === "disciplinePlace" && <DisciplinePlace />}
+                {choise === "disciplinePlannedResults" && <PlannedResultsPage />}
+                {choise === "disciplineScope" && <ScopeDisciplinePage />}
+                {choise === "disciplineContent" && <DisciplineContentPage />}
+                {choise === "disciplineSupport" && <DisciplineSupportPage />}
+                {choise === "disciplineEvaluationsFunds" && <DisciplineEvaluationsFunds />}
+                {choise === "resourceSupport" && <ResourceSupportPage />}
+                {choise === "testPdf" && <TestPdf />}
             </Box>
         </Container>
-
     );
 }
 

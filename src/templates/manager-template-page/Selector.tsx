@@ -2,11 +2,7 @@
 import { Box } from '@mui/material';
 import React from 'react';
 import Select, { ActionMeta, SingleValue } from 'react-select';
-
-interface OptionType {
-    label: string;
-    value: string;
-}
+import { OptionType } from '../types/SelectorTypes';
 
 interface CustomSelector {
     title: string;

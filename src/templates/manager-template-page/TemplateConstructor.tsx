@@ -1,49 +1,13 @@
 import { FC, useState } from "react";
 import useStore from "../../store/store";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-
-interface TemplateDataTitles {
-    [key: string]: string
-}
-
-interface TemplateConstructor {
-    setChoise: (value: string) => void;
-}
-
-interface SelectorOption {
-    label: string;
-    value: string;
-}
-
-const selectorOptions = {
-    workType: [
-        { label: 'Создание нового шаблона РПД', value: 'create' },
-        { label: 'Редактирование существующего шаблона РПД', value: 'edit' },
-    ],
-    creationType: [
-        { label: 'На основе выгрузки 1C', value: '1c' },
-        { label: 'На основе шаблона выбранного года', value: 'currentYearTemplate' },
-        { label: 'На основе шаблона другого института', value: 'otherInstituteTemplate' },
-    ],
-    institute: [
-        { label: 'Институт системного анализа и управления', value: 'ISAU' },
-        { label: 'Инженерно физический институт', value: 'EFI' },
-        { label: 'Факультет социальных и гуманитарных наук', value: 'FSHS' },
-        { label: 'Факультет естественных и инженерных наук', value: 'FNES' },
-    ],
-};
+import { OptionType } from "../types/SelectorTypes";
+import { TemplateConstructor } from "../types/TemplateConstructorTypes";
+import { selectorOptions } from "../constants/selectorOptions";
+import { templateDataTitles } from "../constants/templateDataTitles";
 
 const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
     const { selectedTemplateData } = useStore();
-
-    const templateDataTitles: TemplateDataTitles = {
-        faculty: "Институт",
-        levelEducation: "Уровень образования",
-        directionOfStudy: "Направление обучения",
-        profile: "Профиль направления обучения",
-        formEducation: "Форма обучения",
-        year: "Год набора"
-    }
 
     const [selected, setSelected] = useState({
         workType: '',
@@ -63,7 +27,7 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
     const renderSelector = (
         name: keyof typeof selected,
         label: string,
-        options: SelectorOption[],
+        options: OptionType[],
         dependsOn?: keyof typeof selected
     ) => {
         if (dependsOn && !selected[dependsOn]) {
