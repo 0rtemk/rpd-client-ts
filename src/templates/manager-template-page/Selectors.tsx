@@ -6,11 +6,7 @@ import FindRpdTemplates from './FindRpdTemplates';
 import Loader from '../../helperComponents/Loader';
 import { Box, Button } from '@mui/material';
 import useStore from '../../store/store';
-
-interface OptionType {
-    label: string;
-    value: string;
-}
+import { OptionType } from '../../types/SelectorTypes';
 
 interface JsonData {
     [key: string]: string | JsonData;

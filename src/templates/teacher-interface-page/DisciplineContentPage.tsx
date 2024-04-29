@@ -1,6 +1,5 @@
 import { useState, useEffect, FC } from 'react';
 import axios from "axios";
-
 import useStore from "../../store/store";
 import EditableCell from "./changeable-elements/EditableCell";
 import EditableNumber from "./changeable-elements/EditableNumber";
@@ -10,27 +9,9 @@ import {
   Box, Button, ButtonGroup, TableContainer, Table, TableHead,
   TableBody, TableRow, TableCell, Paper
 } from '@mui/material';
+import { ObjectHours, DisciplineContentData } from '../../types/DisciplineContentPageTypes';
 
-interface DisciplineContent {
-  theme: string;
-  lectures: number;
-  seminars: number;
-  independent_work: number;
-}
-
-interface ObjectHours {
-  all: number;
-  lectures: number;
-  seminars: number;
-  lect_and_sems: number;
-  independent_work: number;
-}
-
-interface DisciplineContentData {
-  [id: string]: DisciplineContent;
-}
-
-const DisciplineContentPage: FC = ()  => {
+const DisciplineContentPage: FC = () => {
     const initialData = useStore.getState().jsonData.content as DisciplineContentData | undefined;
     const initialDataLength = initialData ? Object.keys(initialData).length : 0;
 

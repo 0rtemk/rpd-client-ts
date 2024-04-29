@@ -1,5 +1,6 @@
-import ChangeableCoverPage from './rpd-changeable-elements/ChangeableCoverPage';
+// RpdCoverPage.tsx
 import { Box } from '@mui/material';
+import ChangeableCoverPage from './rpd-changeable-elements/ChangeableCoverPage';
 
 export default function RpdCoverPage() {
     return (
