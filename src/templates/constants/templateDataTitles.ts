@@ -1,4 +1,4 @@
-import { TemplateDataTitles } from "../types/TemplateConstructorTypes";
+import { TemplateDataTitles } from "../../types/TemplateConstructorTypes";
 
 export const templateDataTitles: TemplateDataTitles = {
     faculty: "Институт",

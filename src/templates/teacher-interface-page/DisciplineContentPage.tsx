@@ -9,7 +9,7 @@ import {
   Box, Button, ButtonGroup, TableContainer, Table, TableHead,
   TableBody, TableRow, TableCell, Paper
 } from '@mui/material';
-import { ObjectHours, DisciplineContentData } from '../types/DisciplineContentPageTypes';
+import { ObjectHours, DisciplineContentData } from '../../types/DisciplineContentPageTypes';
 
 const DisciplineContentPage: FC = () => {
     const initialData = useStore.getState().jsonData.content as DisciplineContentData | undefined;

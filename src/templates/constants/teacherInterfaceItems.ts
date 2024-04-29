@@ -1,4 +1,4 @@
-import { RpdListItem } from "../types/RpdListTypes";
+import { RpdListItem } from "../../types/RpdListTypes";
 
 export const RpdListItems: RpdListItem[] = [
     {

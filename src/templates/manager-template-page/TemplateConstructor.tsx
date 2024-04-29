@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
 import useStore from "../../store/store";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { OptionType } from "../types/SelectorTypes";
-import { TemplateConstructor } from "../types/TemplateConstructorTypes";
+import { OptionType } from "../../types/SelectorTypes";
+import { TemplateConstructor } from "../../types/TemplateConstructorTypes";
 import { selectorOptions } from "../constants/selectorOptions";
 import { templateDataTitles } from "../constants/templateDataTitles";
 

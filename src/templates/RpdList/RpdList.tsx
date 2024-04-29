@@ -1,7 +1,7 @@
 import { List } from "@mui/material";
 import RpdListItemComponent from "./RpdListItem";
 import { FC } from "react";
-import { RpdListProps } from "../types/RpdListTypes";
+import { RpdListProps } from "../../types/RpdListTypes";
 
 const RpdList: FC<RpdListProps> = ({ RpdListItems, setChoise }) => {
     return (
