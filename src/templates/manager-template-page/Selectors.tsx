@@ -38,44 +38,68 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
     });
 
     const [data, setData] = useState<Nullable<JsonData>>(undefined);
-    const { setSelectedTemplateData } = useStore();
+    const { setSelectedTemplateData, selectedTemplateData } = useStore();
+
+    const fetchData = async () => {
+        const response = await fetch('/json_profiles.json', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const jsonData: JsonData = await response.json();
+            setData(jsonData);
+        } else {
+            console.error('Error fetching the data');
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('/json_profiles.json', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const jsonData: JsonData = await response.json();
-                setData(jsonData);
-            } else {
-                console.error('Error fetching the data');
-            }
-        };
-
+        if (selectedTemplateData) {
+          setSelectors({
+            faculty: selectedTemplateData.faculty ? { value: selectedTemplateData.faculty, label: selectedTemplateData.faculty } : undefined,
+            levelEducation: selectedTemplateData.levelEducation ? { value: selectedTemplateData.levelEducation, label: selectedTemplateData.levelEducation } : undefined,
+            directionOfStudy: selectedTemplateData.directionOfStudy ? { value: selectedTemplateData.directionOfStudy, label: selectedTemplateData.directionOfStudy } : undefined,
+            profile: selectedTemplateData.profile ? { value: selectedTemplateData.profile, label: selectedTemplateData.profile } : undefined,
+            formEducation: selectedTemplateData.formEducation ? { value: selectedTemplateData.formEducation, label: selectedTemplateData.formEducation } : undefined,
+            year: selectedTemplateData.year ? { value: selectedTemplateData.year, label: selectedTemplateData.year } : undefined
+          });
+        }
         fetchData();
-    }, []);
+      }, []);
 
-    const handleChange = (name: keyof SelectorsState) => (
+      const handleChange = (name: keyof SelectorsState) => (
         selectedOption: SingleValue<OptionType>,
         actionMeta: ActionMeta<OptionType>
-      ) => {
+    ) => {
         console.log(`Action: ${actionMeta.action}`);
-      
-        setSelectors(prevSelectors => ({
-          ...prevSelectors,
-          [name]: selectedOption || undefined,
-          ...(name === 'faculty' && { levelEducation: undefined, directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
-          ...(name === 'levelEducation' && { directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
-          ...(name === 'directionOfStudy' && { profile: undefined, formEducation: undefined, year: undefined }),
-          ...(name === 'profile' && { formEducation: undefined, year: undefined }),
-          ...(name === 'formEducation' && { year: undefined }),
-        }));
-      };
+    
+        const prevSelectors = { ...selectors };
+    
+        const updatedSelectors = {
+            ...prevSelectors,
+            [name]: selectedOption || undefined
+        };
+    
+        const hasChanged = prevSelectors[name]?.value !== updatedSelectors[name]?.value;
+    
+        if (!hasChanged) {
+            setSelectors(updatedSelectors);
+            return;
+        }
+    
+        setSelectors({
+            ...updatedSelectors,
+            ...(name === 'faculty' && { levelEducation: undefined, directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
+            ...(name === 'levelEducation' && { directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
+            ...(name === 'directionOfStudy' && { profile: undefined, formEducation: undefined, year: undefined }),
+            ...(name === 'profile' && { formEducation: undefined, year: undefined }),
+            ...(name === 'formEducation' && { year: undefined }),
+        });
+    };
+    
 
     const getOptions = (): OptionType[] => {
         return data

@@ -38,7 +38,7 @@ const HeaderNavbar: FC = () => {
                 component={Link}
                 to="/teacher-interface"
                 value="/teacher-interface"
-                disabled={isTeacherInterface}
+                // disabled={isTeacherInterface}
             />
             <Tab
                 label="Шаблон РПД"

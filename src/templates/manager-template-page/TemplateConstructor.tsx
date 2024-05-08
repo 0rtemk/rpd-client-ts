@@ -67,6 +67,10 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
         if (selected.workType === 'create' && selected.creationType === 'currentYearTemplate') setChoise("createTemplateFromCurrentYear");
     }
 
+    const changeSelectedData = () => {
+        setChoise("selectData");
+    }
+
     return (
         <>
             <Box>Шаг 2. Создание/редактирование шаблона</Box>
@@ -82,11 +86,17 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
                 {selected.workType === 'create' && renderSelector('creationType', 'Выберите тип создания РПД', selectorOptions.creationType)}
                 {selected.creationType === 'otherInstituteTemplate' && renderSelector('institute', 'Выберите институт', selectorOptions.institute)}
             </Box>
-            {allSelectorsFilled && (
-                <Button variant="outlined" onClick={setSelectType}>
-                    Продолжить
+            <Box width={450} sx={{display: "flex", justifyContent: "space-between"}}>
+                <Button variant="outlined" onClick={changeSelectedData}>
+                    Назад
                 </Button>
-            )}
+                {allSelectorsFilled && (
+                    <Button variant="outlined" onClick={setSelectType}>
+                        Продолжить
+                    </Button>
+                )}
+            </Box>
+            
         </>
     );
 }

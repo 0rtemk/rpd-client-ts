@@ -6,6 +6,7 @@ import { FC } from 'react';
 
 const DisciplinePlace: FC = () => {
     const data = useStore.getState().jsonData;
+    console.log(data)
 
     return (
         <Box>
@@ -28,7 +29,7 @@ const DisciplinePlace: FC = () => {
                 <Loader />
             }
 
-            <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
+            <Box sx={{ p: 1, border: '1px solid grey', my: 1 }}>
                 <JsonChangeValue elementName='place_more_text'/>
             </Box>
         </Box>

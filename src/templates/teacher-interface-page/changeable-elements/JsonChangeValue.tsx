@@ -1,110 +1,83 @@
 import { useState, useRef, FC } from 'react';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 import axios from 'axios';
 import useStore from '../../../store/store';
 import Loader from '../../../helperComponents/Loader';
 import TextEditor from './TextEditor';
+import { AlertColor } from '@mui/material/Alert';
 
-interface JsonChangeValue {
-    elementName: string;
+interface AlertInfo {
+    show: boolean;
+    type: AlertColor;
+    message: string;
 }
 
-const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
-    const fileName = "ivt_bakalavr" //change this later
+interface JsonChangeValueProps {
+    elementName: string;
+    editable?: boolean;
+}
+
+const JsonChangeValue: FC<JsonChangeValueProps> = ({ elementName, editable = true }) => {   
+    const fileName = "ivt_bakalavr";
     const { updateJsonData } = useStore();
     const elementValue = useStore.getState().jsonData[elementName];
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [changeableValue, setChangeableValue] = useState<string>(elementValue);
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const [alertInfo, setAlertInfo] = useState<AlertInfo>({ show: false, type: 'success', message: '' });
 
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
+    const cancelEdit = () => {
+        setIsEditing(false);
+    };
+
     const saveContent = async (htmlValue: string) => {
         setIsEditing(false);
-
         try {
             const response = await axios.put(`/api/update-json-value/${fileName}`, {
                 fieldToUpdate: elementName,
                 value: htmlValue
             });
-
-            updateJsonData(elementName, htmlValue)
+            
+            updateJsonData(elementName, htmlValue);
             setChangeableValue(htmlValue);
+            setAlertInfo({ show: true, type: 'success', message: 'Изменения успешно сохранены.' });
         } catch (error) {
             console.error(error);
-        }
+            setAlertInfo({ show: true, type: 'error', message: 'Ошибка сохранения изменений' });
+        }        
     };
 
     if (!changeableValue) {
-        return <Loader />
+        return <Loader />;
     }
-
-    const TextareaAutosize = styled(BaseTextareaAutosize)(() => `
-        box-sizing: border-box;
-        width: 100%;
-        font-family: 'IBM Plex Sans', sans-serif;
-        font-size: 0.875rem;
-        font-weight: 400;
-        line-height: 1.5;
-        padding: 8px 12px;
-        border-radius: 8px;
-        color: #1C2025;
-        background: #ffffff;
-        border: 1px solid #DAE2ED;
-        box-shadow: 0px 2px 2px #F3F6F9;
-      
-        &:hover {
-          border-color: #3399FF;
-        }
-      
-        &:focus {
-          border-color: #3399FF;
-          box-shadow: 0 0 0 3px #b6daff;
-        }
-      
-        // firefox
-        &:focus-visible {
-          outline: 0;
-        }
-      `,
-    );
 
     return (
         <>
+            {alertInfo.show && (
+                <Alert severity={alertInfo.type} onClose={() => setAlertInfo({ ...alertInfo, show: false })}>
+                    {alertInfo.message}
+                </Alert>
+            )}
             {isEditing ? (
-                // <Box>
-                //     <TextareaAutosize
-                //         ref={textAreaRef}
-                //         aria-label="empty textarea"
-                //         placeholder="Empty"
-                //         id={elementName}
-                //         defaultValue={changeableValue}
-                //         sx={{my: 1}}
-                //     />
-                //     <Button
-                //         variant="outlined"
-                //         size="small"
-                //         endIcon={<SaveAltIcon color='primary' />}
-                //         onClick={() => handleSaveClick()}
-                //     >сохранить изменения</Button>
-                // </Box>
-                <TextEditor value={changeableValue} saveContent={saveContent}/>
+                <TextEditor value={changeableValue} saveContent={saveContent} cancelEdit={cancelEdit} />
             ) : (
                 <Box>
                     <Box dangerouslySetInnerHTML={{ __html: changeableValue }} sx={{py: 1}}></Box>
+                    {editable && (
                     <Button
                         variant="outlined"
                         size="small"
                         endIcon={<EditIcon color='primary' />}
-                        onClick={() => handleEditClick()}
+                        onClick={handleEditClick}
                     >редактировать</Button>
+                    )}
                 </Box>
             )}
         </>
