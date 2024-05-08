@@ -2,6 +2,6 @@ export interface TemplateDataTitles {
     [key: string]: string
 }
 
-export interface TemplateConstructor {
+export interface TemplateConstructorType {
     setChoise: (value: string) => void;
 }

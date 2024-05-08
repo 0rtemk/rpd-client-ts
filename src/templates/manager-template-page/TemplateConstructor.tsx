@@ -2,11 +2,11 @@ import { FC, useState } from "react";
 import useStore from "../../store/store";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { OptionType } from "../../types/SelectorTypes";
-import { TemplateConstructor } from "../../types/TemplateConstructorTypes";
+import { TemplateConstructorType } from "../../types/TemplateConstructorTypes";
 import { selectorOptions } from "../constants/selectorOptions";
 import { templateDataTitles } from "../constants/templateDataTitles";
 
-const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
+const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
     const { selectedTemplateData } = useStore();
 
     const [selected, setSelected] = useState({
@@ -62,7 +62,6 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
     );
 
     const setSelectType = () => {
-        console.log(selected);
         if (selected.workType === 'edit') setChoise("changeTemplate");
         if (selected.workType === 'create' && selected.creationType === 'currentYearTemplate') setChoise("createTemplateFromCurrentYear");
     }
@@ -82,6 +81,9 @@ const TemplateConstructor: FC<TemplateConstructor> = ({ setChoise }) => {
                 {selected.workType === 'create' && renderSelector('creationType', 'Выберите тип создания РПД', selectorOptions.creationType)}
                 {selected.creationType === 'otherInstituteTemplate' && renderSelector('institute', 'Выберите институт', selectorOptions.institute)}
             </Box>
+            <Button variant="outlined" onClick={() => setChoise("selectData")}>
+                Назад
+            </Button>
             {allSelectorsFilled && (
                 <Button variant="outlined" onClick={setSelectType}>
                     Продолжить

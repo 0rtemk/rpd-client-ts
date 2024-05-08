@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import useStore from "../../../store/store";
 import Loader from "../../../helperComponents/Loader";
 import { useNavigate } from "react-router-dom";
+import { VariantType, enqueueSnackbar } from "notistack";
 
 interface ChangeRpdTemplate {
     setChoise: (value: string) => void;
@@ -34,9 +35,9 @@ const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
         try {
             const response = await axios.get('/api/find-by-criteria', { params });
             setData(response.data);
-            console.log(response.data);
         } catch (error) {
-            console.error('Ошибка при получении данных:', error);
+            const variant: VariantType = 'error'
+            enqueueSnackbar('Ошибка при получении данных', {variant});
         }
     };
 
@@ -48,10 +49,10 @@ const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
         try {
             const response = await axios.get(`/api/rpd-profile-templates?id=${id}`);
             setJsonData(response.data);
-            console.log(response.data);
             navigate("/teacher-interface");
         } catch (error) {
-            console.error('Error fetching data:', error);
+            const variant: VariantType = 'error'
+            enqueueSnackbar('Ошибка при получении данных', {variant});
         }
     }
 
@@ -88,6 +89,10 @@ const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <Button variant="outlined" sx={{ mt: 2 }} onClick={() => setChoise("workingType")}>
+                Назад
+            </Button>
         </>
     );
 }

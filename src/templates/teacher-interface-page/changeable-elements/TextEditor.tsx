@@ -26,14 +26,15 @@ import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import axios from 'axios';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface TestEditor {
   value: string;
   saveContent: (htmlValue: string) => Promise<void>;
+  setIsEditing: (value: boolean) => void;
 }
 
-const TextEditor: FC<TestEditor> = ({ value, saveContent }) => {
+const TextEditor: FC<TestEditor> = ({ value, saveContent, setIsEditing }) => {
   const content = stateFromHTML(value);
   const [editorState, setEditorState] = useState(EditorState.createWithContent(content));
   const editorRef = useRef(null);
@@ -118,6 +119,12 @@ const TextEditor: FC<TestEditor> = ({ value, saveContent }) => {
         endIcon={<SaveAltIcon color='primary' />}
         onClick={handleSaveClick}
       >сохранить изменения</Button>
+      <Button
+        variant="outlined"
+        size="small"
+        endIcon={<DeleteIcon color='primary' />}
+        onClick={() => setIsEditing(false)}
+      >отменить изменения</Button>
     </>
   )
 }

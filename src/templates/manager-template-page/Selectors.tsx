@@ -2,11 +2,11 @@ import { useState, useEffect, FC } from 'react';
 import { ActionMeta, SingleValue } from 'react-select';
 import Select from 'react-select';
 import Selector from './Selector';
-import FindRpdTemplates from './FindRpdTemplates';
 import Loader from '../../helperComponents/Loader';
 import { Box, Button } from '@mui/material';
 import useStore from '../../store/store';
 import { OptionType } from '../../types/SelectorTypes';
+import { VariantType, enqueueSnackbar } from 'notistack';
 
 interface JsonData {
     [key: string]: string | JsonData;
@@ -28,13 +28,26 @@ interface Selectors {
 }
 
 const Selectors: FC<Selectors> = ({ setChoise }) => {
+    const selectorsData = useStore.getState().selectedTemplateData;
     const [selectors, setSelectors] = useState<SelectorsState>({
-        faculty: undefined,
-        levelEducation: undefined,
-        directionOfStudy: undefined,
-        profile: undefined,
-        formEducation: undefined,
-        year: undefined
+        faculty: selectorsData.faculty ?
+            { value: selectorsData.faculty, label: selectorsData.faculty } :
+            undefined,
+        levelEducation: selectorsData.levelEducation ?
+            { value: selectorsData.levelEducation, label: selectorsData.levelEducation } :
+            undefined,
+        directionOfStudy: selectorsData.directionOfStudy ?
+            { value: selectorsData.directionOfStudy, label: selectorsData.directionOfStudy } :
+            undefined,
+        profile: selectorsData.profile ?
+            { value: selectorsData.profile, label: selectorsData.profile } :
+            undefined,
+        formEducation: selectorsData.formEducation ?
+            { value: selectorsData.formEducation, label: selectorsData.formEducation } :
+            undefined,
+        year: selectorsData.year ?
+            { value: selectorsData.year, label: selectorsData.year } :
+            undefined,
     });
 
     const [data, setData] = useState<Nullable<JsonData>>(undefined);
@@ -42,40 +55,36 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('/json_profiles.json', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
+            try {
+                const response = await fetch('/json_profiles.json', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
                 const jsonData: JsonData = await response.json();
                 setData(jsonData);
-            } else {
-                console.error('Error fetching the data');
+
+            } catch (error) {
+                const variant: VariantType = 'error'
+                enqueueSnackbar('Ошибка закгруки профилей', { variant });
             }
         };
 
         fetchData();
     }, []);
 
-    const handleChange = (name: keyof SelectorsState) => (
-        selectedOption: SingleValue<OptionType>,
-        actionMeta: ActionMeta<OptionType>
-      ) => {
-        console.log(`Action: ${actionMeta.action}`);
-      
+    const handleChange = (name: keyof SelectorsState) => (selectedOption: SingleValue<OptionType>) => {
         setSelectors(prevSelectors => ({
-          ...prevSelectors,
-          [name]: selectedOption || undefined,
-          ...(name === 'faculty' && { levelEducation: undefined, directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
-          ...(name === 'levelEducation' && { directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
-          ...(name === 'directionOfStudy' && { profile: undefined, formEducation: undefined, year: undefined }),
-          ...(name === 'profile' && { formEducation: undefined, year: undefined }),
-          ...(name === 'formEducation' && { year: undefined }),
+            ...prevSelectors,
+            [name]: selectedOption || undefined,
+            ...(name === 'faculty' && { levelEducation: undefined, directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
+            ...(name === 'levelEducation' && { directionOfStudy: undefined, profile: undefined, formEducation: undefined, year: undefined }),
+            ...(name === 'directionOfStudy' && { profile: undefined, formEducation: undefined, year: undefined }),
+            ...(name === 'profile' && { formEducation: undefined, year: undefined }),
+            ...(name === 'formEducation' && { year: undefined }),
         }));
-      };
+    };
 
     const getOptions = (): OptionType[] => {
         return data
@@ -83,7 +92,8 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
             : [];
     };
 
-    const getOptionsForSelector = (data: JsonData, selectorPath: Array<string>, indicator?: string): OptionType[] => {
+    const getOptionsForSelector = (selectorPath: Array<string>, indicator?: string): OptionType[] => {
+        if (!data) return [];
         let currentData = data;
 
         for (const key of selectorPath) {
@@ -92,8 +102,7 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                 return [];
             }
         }
-
-        if(indicator && indicator === 'lastChild') return Object.entries(currentData).map(([key, value]) => ({ label: String(value), value: String(value) }));
+        if (indicator && indicator === 'lastChild') return Object.entries(currentData).map(([key, value]) => ({ label: String(value), value: String(value) }));
         return Object.keys(currentData).map(key => ({ label: key, value: key }));
     };
 
@@ -113,9 +122,9 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
     if (!data) return <Loader />
 
     return (
-        <Box sx={{ py: 1, maxWidth: "500px"}}>
+        <Box sx={{ py: 1, maxWidth: "500px" }}>
             <Box>Шаг 1. Выбор данных</Box>
-            <Box sx={{fontSize: "20px", fontWeight: "600", py: 1}}>Институт</Box>
+            <Box sx={{ fontSize: "20px", fontWeight: "600", py: 1 }}>Институт</Box>
             <Select
                 placeholder="Выберите институт"
                 isClearable
@@ -129,7 +138,7 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                     placeholder="Выберите уровень образования"
                     value={selectors.levelEducation}
                     onChange={handleChange('levelEducation')}
-                    options={getOptionsForSelector(data, [
+                    options={getOptionsForSelector([
                         selectors.faculty.value
                     ])}
                 />
@@ -140,8 +149,8 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                     placeholder="Выберите направление обучения"
                     value={selectors.directionOfStudy}
                     onChange={handleChange('directionOfStudy')}
-                    options={getOptionsForSelector(data, [
-                        selectors.faculty.value, 
+                    options={getOptionsForSelector([
+                        selectors.faculty.value,
                         selectors.levelEducation.value
                     ])}
                 />
@@ -152,9 +161,9 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                     placeholder="Выберите профиль обучения"
                     value={selectors.profile}
                     onChange={handleChange('profile')}
-                    options={getOptionsForSelector(data, [
-                        selectors.faculty.value, 
-                        selectors.levelEducation.value, 
+                    options={getOptionsForSelector([
+                        selectors.faculty.value,
+                        selectors.levelEducation.value,
                         selectors.directionOfStudy.value
                     ])}
                 />
@@ -165,10 +174,10 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                     placeholder="Выберите форму обучения"
                     value={selectors.formEducation}
                     onChange={handleChange('formEducation')}
-                    options={getOptionsForSelector(data, [
-                        selectors.faculty.value, 
-                        selectors.levelEducation.value, 
-                        selectors.directionOfStudy.value, 
+                    options={getOptionsForSelector([
+                        selectors.faculty.value,
+                        selectors.levelEducation.value,
+                        selectors.directionOfStudy.value,
                         selectors.profile.value
                     ])}
                 />
@@ -179,25 +188,15 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                     placeholder="Выберите год набора"
                     value={selectors.year}
                     onChange={handleChange('year')}
-                    options={getOptionsForSelector(data, [
-                        selectors.faculty.value, 
-                        selectors.levelEducation.value, 
-                        selectors.directionOfStudy.value, 
-                        selectors.profile.value, 
+                    options={getOptionsForSelector([
+                        selectors.faculty.value,
+                        selectors.levelEducation.value,
+                        selectors.directionOfStudy.value,
+                        selectors.profile.value,
                         selectors.formEducation.value
                     ], 'lastChild')}
                 />
             )}
-            {/* {selectors.year && (
-                <FindRpdTemplates
-                    faculty={selectors.faculty}
-                    levelEducation={selectors.levelEducation}
-                    directionOfStudy={selectors.directionOfStudy}
-                    profile={selectors.profile}
-                    formEducation={selectors.formEducation}
-                    year={selectors.year}
-                />
-            )} */}
             {selectors.year && (
                 <Button variant="outlined" onClick={saveTemplateData}>Продолжить</Button>
             )}

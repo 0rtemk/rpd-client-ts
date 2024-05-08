@@ -8,15 +8,16 @@ import axios from 'axios';
 import useStore from '../../../store/store';
 import Loader from '../../../helperComponents/Loader';
 import TextEditor from './TextEditor';
+import { VariantType, useSnackbar } from 'notistack';
 
 interface JsonChangeValue {
     elementName: string;
 }
 
 const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
-    const fileName = "ivt_bakalavr" //change this later
     const { updateJsonData } = useStore();
     const elementValue = useStore.getState().jsonData[elementName];
+    const { enqueueSnackbar } = useSnackbar();
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [changeableValue, setChangeableValue] = useState<string>(elementValue);
@@ -28,17 +29,21 @@ const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
 
     const saveContent = async (htmlValue: string) => {
         setIsEditing(false);
+        const templateId = useStore.getState().jsonData.id;
 
         try {
-            const response = await axios.put(`/api/update-json-value/${fileName}`, {
+            const response = await axios.put(`/api/update-json-value/${templateId}`, {
                 fieldToUpdate: elementName,
                 value: htmlValue
             });
 
+            const variant: VariantType = 'success'
+            enqueueSnackbar('Данные успешно сохранены', {variant});
             updateJsonData(elementName, htmlValue)
             setChangeableValue(htmlValue);
         } catch (error) {
-            console.error(error);
+            const variant: VariantType = 'error'
+            enqueueSnackbar('Ошибка сохранения данных', {variant});
         }
     };
 
@@ -95,7 +100,7 @@ const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
                 //         onClick={() => handleSaveClick()}
                 //     >сохранить изменения</Button>
                 // </Box>
-                <TextEditor value={changeableValue} saveContent={saveContent}/>
+                <TextEditor value={changeableValue} saveContent={saveContent} setIsEditing={setIsEditing}/>
             ) : (
                 <Box>
                     <Box dangerouslySetInnerHTML={{ __html: changeableValue }} sx={{py: 1}}></Box>

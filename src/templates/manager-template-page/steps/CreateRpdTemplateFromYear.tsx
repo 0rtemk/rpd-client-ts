@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from "react";
 import useStore from "../../../store/store";
 import Loader from "../../../helperComponents/Loader";
 import { useNavigate } from "react-router-dom";
+import { VariantType, enqueueSnackbar } from "notistack";
 
 interface CreateRpdTemplateFromYear {
     setChoise: (value: string) => void;
@@ -72,7 +73,8 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
             console.log(response.data);
             // navigate("/teacher-interface");
         } catch (error) {
-            console.error('Error fetching data:', error);
+            const variant: VariantType = 'error'
+            enqueueSnackbar('Ошибка создания шаблона', {variant});
         }
     }
 
@@ -112,6 +114,10 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
                 </Table>
             </TableContainer>
 
+            <Button variant="outlined" sx={{ mt: 2 }} onClick={() => setChoise("workingType")}>
+                Назад
+            </Button>
+
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -120,8 +126,8 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
             >
                 <Box sx={style}>
                     <Box sx={{ fontSize: "20px", fontWeight: "600" }}>Ошибка. Шаблон уже существует</Box>
-                    <Box sx={{ py: 2}}>Перейти к шаблону?</Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between"}}>
+                    <Box sx={{ py: 2 }}>Перейти к шаблону?</Box>
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Button variant="outlined">Перейти</Button>
                         <Button variant="outlined" onClick={handleClose}>Закрыть</Button>
                     </Box>

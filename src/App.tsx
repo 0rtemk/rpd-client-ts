@@ -4,6 +4,8 @@ import Header from './templates/Header';
 import Manager from './templates/Manager';
 import RPDTemplate from './templates/RPDTemplate';
 import TeacherInterface from './templates/TeacherInterface';
+import { SnackbarProvider } from 'notistack';
+
 
 import './styles.css';
 import './styles-new.css';
@@ -11,6 +13,7 @@ import './styles-new.css';
 function App() {
   return (
     <>
+      <SnackbarProvider maxSnack={3}>
         <Router>
           <Header />
           <Routes>
@@ -19,6 +22,7 @@ function App() {
             <Route path="/teacher-interface" element={<TeacherInterface />} />
           </Routes>
         </Router>
+      </SnackbarProvider>
     </>
   )
 }
