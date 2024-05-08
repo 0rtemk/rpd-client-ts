@@ -1,20 +1,12 @@
-import { Outlet } from 'react-router-dom';
 import { Container, Box } from '@mui/material';
-import RpdList from './teacher-interface-page/RpdList/RpdList';
+import { useState } from 'react';
+import RpdList from './RpdList/RpdList';
+import RpdCoverPage from './rpd-template-page/RpdCoverPage';
 import { FC } from 'react';
-
-interface RpdListItems {
-    href: string;
-    text: string;
-}
+import { RpdListItems } from './constants/rpdTemplateItems';
 
 const RPDTemplate: FC = () => {
-    const RpdListItems: RpdListItems[] = [
-        {
-            href: "/rpd-template/cover-page",
-            text: "Титульный лист"
-        }
-    ]
+    const [choise, setChoise] = useState<string>("coverPage");
 
     return (
         <Container 
@@ -39,7 +31,7 @@ const RPDTemplate: FC = () => {
                         backgroundColor: '#fefefe'
                     }}
                 >
-                    <RpdList RpdList={RpdListItems}/>
+                    <RpdList RpdListItems={RpdListItems} setChoise={setChoise}/>
                 </Box>
             </Box>
             <Box
@@ -48,7 +40,9 @@ const RPDTemplate: FC = () => {
                 ml={2}
                 sx={{ backgroundColor: '#fefefe', width: "100%"}}
             >
-                <Outlet />
+                {choise === "coverPage" && (
+                    <RpdCoverPage />
+                )}
             </Box>
         </Container>
     );
