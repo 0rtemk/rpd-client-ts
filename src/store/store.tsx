@@ -16,9 +16,15 @@ interface SelectedTemplateData {
   year: string | undefined;
 }
 
+interface CreateByCriteria {
+  faculty?: string | undefined;
+  year?: string | undefined;
+}
+
 interface StoreState {
   jsonData: JsonData;
   selectedTemplateData: SelectedTemplateData;
+  createByCriteria: CreateByCriteria;
   setJsonData: (data: JsonData) => void;
   updateJsonData: (key: string, value: JsonValue) => void;
   setSelectedTemplateData: (
@@ -28,6 +34,10 @@ interface StoreState {
     profile: string | undefined,
     formEducation: string | undefined,
     year: string | undefined
+  ) => void;
+  setCreateByCriteria: (
+    faculty?: string | undefined,
+    year?: string | undefined
   ) => void;
 }
 
@@ -39,6 +49,10 @@ const useStore = create<StoreState>()(immer((set) => ({
     directionOfStudy: undefined,
     profile: undefined,
     formEducation: undefined,
+    year: undefined
+  },
+  createByCriteria: {
+    faculty: undefined,
     year: undefined
   },
   setJsonData: (data) => {
@@ -68,6 +82,12 @@ const useStore = create<StoreState>()(immer((set) => ({
         }
       }
     });
+  },
+  setCreateByCriteria: (faculty, year) => {
+    set((state) => {
+      if (faculty) state.createByCriteria.faculty = faculty;
+      if (year) state.createByCriteria.year = year;
+    })
   }
 })));
 

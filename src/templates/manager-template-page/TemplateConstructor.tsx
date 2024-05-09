@@ -5,22 +5,24 @@ import { OptionType } from "../../types/SelectorTypes";
 import { TemplateConstructorType } from "../../types/TemplateConstructorTypes";
 import { selectorOptions } from "../constants/selectorOptions";
 import { templateDataTitles } from "../constants/templateDataTitles";
+import { VariantType, enqueueSnackbar } from "notistack";
 
 const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
-    const { selectedTemplateData } = useStore();
+    const { selectedTemplateData, setCreateByCriteria } = useStore();
 
     const [selected, setSelected] = useState({
         workType: '',
         creationType: '',
         institute: '',
+        year: '',
     });
 
     const handleSelectChange = (name: keyof typeof selected) => (event: SelectChangeEvent) => {
         setSelected(prev => ({
             ...prev,
             [name]: event.target.value,
-            ...(name === 'workType' && { creationType: '', institute: '' }),
-            ...(name === 'creationType' && { institute: '' }),
+            ...(name === 'workType' && { creationType: '', year: '', institute: '' }),
+            ...(name === 'creationType' && { year: '', institute: '' }),
         }));
     };
 
@@ -56,14 +58,31 @@ const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
     const allSelectorsFilled = selected.workType && (
         selected.workType !== 'create' ||
         (selected.workType === 'create' && selected.creationType && (
-            (selected.creationType !== 'currentYearTemplate' || selected.creationType === 'currentYearTemplate') &&
+            (selected.creationType !== 'currentYearTemplate' || (selected.creationType === 'currentYearTemplate' && selected.year)) &&
             (selected.creationType !== 'otherInstituteTemplate' || (selected.creationType === 'otherInstituteTemplate' && selected.institute))
         ))
     );
 
     const setSelectType = () => {
+        const variant: VariantType = 'error'
+        if(selected.year === selectedTemplateData.year){
+            enqueueSnackbar('Невозможно создать шаблон. Параметры года набора должны быть различны', {variant});
+            return
+        }
+        if(selected.institute === selectedTemplateData.faculty){
+            enqueueSnackbar('Невозможно создать шаблон. Параметры института должны быть различны', {variant});
+            return
+        }
+        
         if (selected.workType === 'edit') setChoise("changeTemplate");
-        if (selected.workType === 'create' && selected.creationType === 'currentYearTemplate') setChoise("createTemplateFromCurrentYear");
+        if (selected.workType === 'create' && selected.creationType === 'currentYearTemplate') {
+            setCreateByCriteria(undefined, selected.year);
+            setChoise("createTemplateFromCurrentYear");
+        }
+        if (selected.workType === 'create' && selected.creationType === 'otherInstituteTemplate') {
+            setCreateByCriteria(selected.institute, undefined);
+            // setChoise("createTemplateFromOtherInstitute");
+        }
     }
 
     return (
@@ -79,6 +98,7 @@ const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
             <Box width={450}>
                 {renderSelector('workType', 'Выберите тип работы с РПД', selectorOptions.workType)}
                 {selected.workType === 'create' && renderSelector('creationType', 'Выберите тип создания РПД', selectorOptions.creationType)}
+                {selected.creationType === 'currentYearTemplate' && renderSelector('year', 'Выберите год набора', selectorOptions.year)}
                 {selected.creationType === 'otherInstituteTemplate' && renderSelector('institute', 'Выберите институт', selectorOptions.institute)}
             </Box>
             <Button variant="outlined" onClick={() => setChoise("selectData")}>

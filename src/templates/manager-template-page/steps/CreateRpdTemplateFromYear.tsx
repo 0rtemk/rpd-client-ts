@@ -30,6 +30,8 @@ const style = {
 
 const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise }) => {
     const selectedTemplateData = useStore.getState().selectedTemplateData;
+    const createByCriteria = useStore.getState().createByCriteria;
+    console.log(createByCriteria);
     const { setJsonData } = useStore();
     const [data, setData] = useState<TemplateData[]>();
     const navigate = useNavigate();
@@ -50,9 +52,9 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
         try {
             const response = await axios.get('/api/find-by-criteria', { params });
             setData(response.data);
-            console.log(response.data);
         } catch (error) {
-            console.error('Ошибка при получении данных:', error);
+            const variant: VariantType = 'error'
+            enqueueSnackbar('Ошибка при получении данных', {variant});
         }
     };
 
@@ -61,9 +63,9 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
     }, []);
 
     const uploadTempllateData = async (disciplinsName: string, id: number) => {
-        console.log(disciplinsName, id);
         try {
             const response = await axios.post('/api/find-or-create-profile-template', {
+                year: createByCriteria.year,
                 disciplinsName,
                 id,
             });
@@ -82,7 +84,7 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
 
     return (
         <>
-            <Box>Шаг 3. Создание шаблона на текущий год на основе выбранного</Box>
+            <Box>Шаг 3. Создание шаблона на {createByCriteria.year} на основе {selectedTemplateData.year}</Box>
             <Box sx={{ py: 2, fontSize: "18px", fontWeight: "600" }}>Шаблоны:</Box>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
