@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import useStore from '../../store/store';
 import { Tab, Tabs} from '@mui/material';
 import { BorderColor, Description, ListAlt } from '@mui/icons-material';
+import Can from '../../ability/Can';
 
 const HeaderNavbar: FC = () => {
     const { jsonData } = useStore();
@@ -23,31 +24,37 @@ const HeaderNavbar: FC = () => {
             onChange={handleChange}
             aria-label="navbar"
         >
-            <Tab
-                label="Интерфейс РОП"
-                icon={<ListAlt />}
-                iconPosition="end"
-                component={Link}
-                to="/manager"
-                value="/manager"
-            />
-            <Tab
-                label="Интерфейс преподавателя"
-                icon={<Description />}
-                iconPosition="end"
-                component={Link}
-                to="/teacher-interface"
-                value="/teacher-interface"
-                disabled={isTeacherInterface}
-            />
-            <Tab
-                label="Шаблон РПД"
-                icon={<BorderColor />}
-                iconPosition="end"
-                component={Link}
-                to="/rpd-template"
-                value="/rpd-template"
-            />
+            <Can I="get" a="rop_interface">
+                <Tab
+                    label="Интерфейс РОП"
+                    icon={<ListAlt />}
+                    iconPosition="end"
+                    component={Link}
+                    to="/manager"
+                    value="/manager"
+                />
+            </Can>
+            <Can I="get" a="teacher_interface">
+                <Tab
+                    label="Интерфейс преподавателя"
+                    icon={<Description />}
+                    iconPosition="end"
+                    component={Link}
+                    to="/teacher-interface"
+                    value="/teacher-interface"
+                    disabled={isTeacherInterface}
+                />
+            </Can>
+            <Can I="get" a="change_templates">
+                <Tab
+                    label="Шаблон РПД"
+                    icon={<BorderColor />}
+                    iconPosition="end"
+                    component={Link}
+                    to="/rpd-template"
+                    value="/rpd-template"
+                />
+            </Can>
         </Tabs>
     )
 }
