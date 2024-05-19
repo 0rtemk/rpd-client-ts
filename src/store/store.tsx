@@ -1,5 +1,6 @@
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { AppAbility, UserRole, buildAbilityFor } from '../ability/CaslAbility';
 
 // Рекурсивный тип для JSON данных
 type JsonValue = any;
@@ -25,6 +26,7 @@ interface StoreState {
   jsonData: JsonData;
   selectedTemplateData: SelectedTemplateData;
   createByCriteria: CreateByCriteria;
+  ability: AppAbility;
   setJsonData: (data: JsonData) => void;
   updateJsonData: (key: string, value: JsonValue) => void;
   setSelectedTemplateData: (
@@ -39,6 +41,7 @@ interface StoreState {
     faculty?: string | undefined,
     year?: string | undefined
   ) => void;
+  updateAbility: (roleIndex: number) => void;
 }
 
 const useStore = create<StoreState>()(immer((set) => ({
@@ -87,6 +90,25 @@ const useStore = create<StoreState>()(immer((set) => ({
     set((state) => {
       if (faculty) state.createByCriteria.faculty = faculty;
       if (year) state.createByCriteria.year = year;
+    })
+  },
+  ability: buildAbilityFor('anonymous'),
+  updateAbility: (roleIndex) => {
+    set((state) => {
+      let role: UserRole = "anonymous";
+      switch (roleIndex) {
+          case 1:
+              role = "admin";
+              break;
+          case 2:
+              role = "teacher";
+              break;
+          case 3:
+              role = "rop";
+              break;
+      };
+
+      state.ability = buildAbilityFor(role);
     })
   }
 })));

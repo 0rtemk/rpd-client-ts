@@ -1,4 +1,14 @@
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import AuthProvider from "./context/AuthContext.jsx";
+import { CaslProvider } from "./ability/CaslProvider.js";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
+//@NOTE Типизация
+//@ts-expect-error
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <AuthProvider>
+    <CaslProvider>
+      <App />
+    </CaslProvider>
+  </AuthProvider>
+);

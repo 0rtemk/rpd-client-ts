@@ -30,5 +30,6 @@ const defineRulesFor = (role: UserRole) => {
 };
 
 export const buildAbilityFor = (role: UserRole): AppAbility => {
+    console.log("building for: ", role);
     return new AppAbilityClass(defineRulesFor(role), {});
 };
