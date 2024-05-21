@@ -3,7 +3,7 @@ import { useState } from 'react';
 import RpdList from './RpdList/RpdList';
 import RpdCoverPage from './rpd-template-page/RpdCoverPage';
 import { FC } from 'react';
-import { RpdListItems } from './constants/rpdTemplateItems';
+import { RpdListItems } from '../constants/rpdTemplateItems';
 
 const RPDTemplate: FC = () => {
     const [choise, setChoise] = useState<string>("coverPage");

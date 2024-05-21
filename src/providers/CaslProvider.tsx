@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
-import CaslContext from './CaslContext';
-import useStore from '../store/store';
+import CaslContext from '../context/CaslContext';
+import useAuth from '../store/useAuth';
 
 type Props = {
   children: React.ReactNode;
 };
 
 export const CaslProvider: FC<Props> = ({ children }) => {
-  const { ability } = useStore();
+  const { ability } = useAuth();
 
   return (
     <CaslContext.Provider value={ ability }>

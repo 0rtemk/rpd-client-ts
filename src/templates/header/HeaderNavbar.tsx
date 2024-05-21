@@ -1,6 +1,6 @@
 import { useState, useEffect, SyntheticEvent, FC } from 'react';
 import { Link } from 'react-router-dom';
-import useStore from '../../store/store';
+import useStore from '../../store/useStore';
 import { Tab, Tabs} from '@mui/material';
 import { BorderColor, Description, ListAlt } from '@mui/icons-material';
 import Can from '../../ability/Can';

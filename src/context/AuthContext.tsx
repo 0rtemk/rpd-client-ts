@@ -1,11 +1,10 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect } from "react";
 import axios from "axios";
-import inMemoryJWT from "../services/inMemoryJWT";
+import inMemoryJWT from "../utils/inMemoryJWT";
 import config from "../config";
 import Loader from "../helperComponents/Loader";
 import showErrorMessage from "../utils/showErrorMessage";
-import CaslContext from "../ability/CaslContext";
-import useStore from "../store/store";
+import useAuth from "../store/useAuth";
 
 export const AuthClient = axios.create({
   baseURL: `${config.API_URL}/auth`,
@@ -39,9 +38,7 @@ const AuthProvider = ({ children }) => {
   const [isAppReady, setIsAppReady] = useState(false);
   const [isUserLogged, setIsUserLogged] = useState(false);
   const [data, setData] = useState();
-  const { updateAbility } = useStore();
-
-  const ability = useContext(CaslContext);
+  const { updateAbility, updateUserName } = useAuth();
 
   const handleFetchProtected = () => {
     ResourceClient.get("/protected")
@@ -56,7 +53,8 @@ const AuthProvider = ({ children }) => {
       .then(() => {
         setIsUserLogged(false);
         inMemoryJWT.deleteToken();
-
+        updateAbility();
+        updateUserName(undefined);
         setData(undefined);
       })
       .catch((error) => showErrorMessage(error.response.data.error));
@@ -84,10 +82,10 @@ const AuthProvider = ({ children }) => {
 
         inMemoryJWT.setToken(accessToken, accessTokenExpiration);
         updateAbility(role);
+        updateUserName(fullname);
         setIsUserLogged(true);
       })
-      .catch((error) => console.log(error));
-      // .catch((error) => showErrorMessage(error.response.data.error));
+      .catch((error) => showErrorMessage(error.response.data.error));
   };
 
   useEffect(() => {

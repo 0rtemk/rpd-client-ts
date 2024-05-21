@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import JsonChangeValue from './changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
-import useStore from '../../store/store';
+import useStore from '../../store/useStore';
 import Loader from '../../helperComponents/Loader';
 
 const CoverPage: FC = () => {

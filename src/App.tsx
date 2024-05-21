@@ -6,13 +6,10 @@ import RPDTemplate from './templates/RPDTemplate';
 import TeacherInterface from './templates/TeacherInterface';
 import { AuthContext } from './context/AuthContext';
 import { SnackbarProvider } from 'notistack';
-import SignIn from "./pages/SignIn";
-
+import SignIn from "./templates/SignIn";
 
 import './styles.css';
 import './styles-new.css';
-import SignUp from './pages/SignUp';
-
 
 function App() {
   //@NOTE Типизация
@@ -33,10 +30,7 @@ function App() {
                 <Route path="/teacher-interface" element={<TeacherInterface />} />
               </>
             ) : (
-              <>
-                <Route path="/sign-in" element={<SignIn />} />
-                <Route path="/sign-up" element={<SignUp />} />
-              </>
+              <Route path="/sign-in" element={<SignIn />} />
             )}
             <Route
               path="*"

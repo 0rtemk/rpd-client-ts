@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
-import useStore from "../../store/store";
+import useStore from "../../store/useStore";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { OptionType } from "../../types/SelectorTypes";
 import { TemplateConstructorType } from "../../types/TemplateConstructorTypes";
-import { selectorOptions } from "../constants/selectorOptions";
-import { templateDataTitles } from "../constants/templateDataTitles";
+import { selectorOptions } from "../../constants/selectorOptions";
+import { templateDataTitles } from "../../constants/templateDataTitles";
 import { VariantType, enqueueSnackbar } from "notistack";
 
 const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {

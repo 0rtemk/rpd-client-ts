@@ -1,7 +1,7 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import useStore from "../../../store/store";
+import useStore from "../../../store/useStore";
 import Loader from "../../../helperComponents/Loader";
 import { useNavigate } from "react-router-dom";
 import { VariantType, enqueueSnackbar } from "notistack";

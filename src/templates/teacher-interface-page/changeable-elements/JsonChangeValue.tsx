@@ -5,7 +5,7 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 import axios from 'axios';
-import useStore from '../../../store/store';
+import useStore from '../../../store/useStore';
 import Loader from '../../../helperComponents/Loader';
 import TextEditor from './TextEditor';
 import { VariantType, useSnackbar } from 'notistack';

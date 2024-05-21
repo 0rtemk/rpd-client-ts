@@ -1,6 +1,6 @@
 import { useState, useEffect, FC } from 'react';
 import axios from "axios";
-import useStore from "../../store/store";
+import useStore from "../../store/useStore";
 import EditableCell from "./changeable-elements/EditableCell";
 import EditableNumber from "./changeable-elements/EditableNumber";
 import JsonChangeValue from './changeable-elements/JsonChangeValue';

@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import AuthProvider from "./context/AuthContext.jsx";
-import { CaslProvider } from "./ability/CaslProvider.js";
+import { CaslProvider } from "./providers/CaslProvider.js";
 
 //@NOTE Типизация
 //@ts-expect-error

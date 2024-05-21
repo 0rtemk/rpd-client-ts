@@ -1,5 +1,5 @@
 import { createContextualCan } from '@casl/react';
-import CaslContext from './CaslContext';
+import CaslContext from '../context/CaslContext';
 
 const Can = createContextualCan(CaslContext.Consumer);
 

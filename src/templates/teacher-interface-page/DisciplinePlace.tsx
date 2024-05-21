@@ -1,4 +1,4 @@
-import useStore from '../../store/store';
+import useStore from '../../store/useStore';
 import JsonChangeValue from './changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
 import Loader from '../../helperComponents/Loader';

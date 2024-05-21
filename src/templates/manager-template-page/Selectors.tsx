@@ -4,7 +4,7 @@ import Select from 'react-select';
 import Selector from './Selector';
 import Loader from '../../helperComponents/Loader';
 import { Box, Button } from '@mui/material';
-import useStore from '../../store/store';
+import useStore from '../../store/useStore';
 import { OptionType } from '../../types/SelectorTypes';
 import { VariantType, enqueueSnackbar } from 'notistack';
 

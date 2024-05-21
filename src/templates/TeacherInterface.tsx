@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container, Box } from '@mui/material';
 import RpdList from './RpdList/RpdList';
 import { FC } from 'react';
-import { RpdListItems } from './constants/teacherInterfaceItems';
+import { RpdListItems } from '../constants/teacherInterfaceItems';
 
 import AimsPage from './teacher-interface-page/AimsPage';
 import ApprovalPage from './teacher-interface-page/ApprovalPage';
