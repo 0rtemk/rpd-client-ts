@@ -1,11 +1,11 @@
 import { FC } from 'react';
-import JsonChangeValue from './changeable-elements/JsonChangeValue';
+import JsonChangeValue from '../changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
 
-const DisciplineEvaluationsFunds: FC = () => {
+const DisciplineSupportPage: FC = () => {
     return (
         <Box>
-            <Box component='h2'>Фонды оценочных средств по дисциплине</Box>
+            <Box component='h2'>Перечень учебно-методического обеспечения по дисциплине </Box>
             <Box sx={{
                 p: 1,
                 border: '1px dashed grey',
@@ -20,10 +20,10 @@ const DisciplineEvaluationsFunds: FC = () => {
                     p: 1
                 }
             }}>
-                <JsonChangeValue elementName='assessment_tools_template'/>
+                <JsonChangeValue elementName='methodological_support_template'/>
             </Box>
         </Box>
     );
 }
 
-export default DisciplineEvaluationsFunds;
+export default DisciplineSupportPage;

@@ -1,7 +1,7 @@
-import useStore from '../../store/useStore';
-import JsonChangeValue from './changeable-elements/JsonChangeValue';
+import useStore from '../../../store/useStore';
+import JsonChangeValue from '../changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
-import Loader from '../../helperComponents/Loader';
+import Loader from '../../../helperComponents/Loader';
 import { FC } from 'react';
 
 const DisciplinePlace: FC = () => {

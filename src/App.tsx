@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Header from './templates/Header';
 import Manager from './templates/Manager';
 import RPDTemplate from './templates/RPDTemplate';
@@ -10,12 +10,22 @@ import SignIn from "./templates/SignIn";
 
 import './styles.css';
 import './styles-new.css';
+import useAuth from './store/useAuth';
 
 function App() {
   //@NOTE Типизация
   //@ts-expect-error
   const { isUserLogged } = useContext(AuthContext);
-  // const isUserLogged = true
+  const userRole = useAuth.getState().userRole;
+
+  const userRedirect = () => {
+    if(!isUserLogged) return "/sign-in";
+    if(userRole === "rop") return "/manager";
+    if(userRole === "teacher") return "/teacher-interface";
+    if(userRole === "admin") return "/rpd-template";
+    
+    return "/sign-in";
+  }
 
   return (
     <>
@@ -34,7 +44,7 @@ function App() {
             )}
             <Route
               path="*"
-              element={<Navigate to={isUserLogged ? "/" : "/sign-in"} />}
+              element={<Navigate to={userRedirect()} />}
             />
           </Routes>
         </Router>

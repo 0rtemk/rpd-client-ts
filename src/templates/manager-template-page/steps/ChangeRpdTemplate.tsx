@@ -3,24 +3,29 @@ import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import useStore from "../../../store/useStore";
 import Loader from "../../../helperComponents/Loader";
-import { useNavigate } from "react-router-dom";
-import { VariantType, enqueueSnackbar } from "notistack";
+import { TemplateConstructorType } from "../../../types/TemplateConstructorTypes";
+import showErrorMessage from "../../../utils/showErrorMessage";
+import showSuccessMessage from "../../../utils/showSuccessMessage";
+import TemplateStatus from "../../../helperComponents/TemplateStatus";
+import useAuth from "../../../store/useAuth";
 
-interface ChangeRpdTemplate {
-    setChoise: (value: string) => void;
+interface TemplateStatusObject {
+    date: string,
+    status: string,
+    user: string
 }
 
 interface TemplateData {
     id: number;
     disciplins_name: string;
     teacher: string;
+    status: TemplateStatusObject;
 }
 
-const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
+const ChangeRpdTemplate: FC<TemplateConstructorType> = ({ setChoise }) => {
     const selectedTemplateData = useStore.getState().selectedTemplateData;
-    const { setJsonData } = useStore();
+    const userName = useAuth.getState().userName;
     const [data, setData] = useState<TemplateData[]>();
-    const navigate = useNavigate();
 
     const fetchData = async () => {
         const params = {
@@ -36,8 +41,7 @@ const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
             const response = await axios.get('/api/find-by-criteria', { params });
             setData(response.data);
         } catch (error) {
-            const variant: VariantType = 'error'
-            enqueueSnackbar('Ошибка при получении данных', {variant});
+            showErrorMessage('Ошибка при получении данных');
         }
     };
 
@@ -45,14 +49,22 @@ const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
         fetchData()
     }, []);
 
-    const uploadTempllateData = async (id: number) => {
+    const sendTemplateToTeacher = async (id: number, teacher: string) => {
         try {
-            const response = await axios.get(`/api/rpd-profile-templates?id=${id}`);
-            setJsonData(response.data);
-            navigate("/teacher-interface");
+            const responce = await axios.post(`/api/send-template-to-teacher`, {
+                id,
+                teacher,
+                userName
+            });
+
+            if (responce.data === "UserNotFound") showErrorMessage("Ошибка. Пользователь не найден");
+            if (responce.data === "TemplateAlreadyBinned") showErrorMessage("Ошибка. Данный шаблон уже отправлен преподавателю");
+            if (responce.data === "binnedSuccess") {
+                showSuccessMessage("Шаблон успешно отправлен преподавателю");
+                fetchData();
+            };
         } catch (error) {
-            const variant: VariantType = 'error'
-            enqueueSnackbar('Ошибка при получении данных', {variant});
+            console.log(error);
         }
     }
 
@@ -80,9 +92,17 @@ const ChangeRpdTemplate: FC<ChangeRpdTemplate> = ({ setChoise }) => {
                             >
                                 <TableCell>{row.disciplins_name}</TableCell>
                                 <TableCell>{row.teacher}</TableCell>
-                                <TableCell>Шаблон сформирован</TableCell>
                                 <TableCell>
-                                    <Button variant="outlined" size="small" onClick={() => uploadTempllateData(row.id)}>Выбрать шаблон</Button>
+                                    <TemplateStatus status={row.status}/>
+                                </TableCell>
+                                <TableCell>
+                                    {row.status.status !== "Отправлен преподавателю" &&
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={() => sendTemplateToTeacher(row.id, row.teacher)}
+                                        >Отправить преподавателю</Button>
+                                    }
                                 </TableCell>
                             </TableRow>
                         ))}

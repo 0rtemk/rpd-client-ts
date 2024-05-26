@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import JsonChangeValue from './changeable-elements/JsonChangeValue';
+import JsonChangeValue from '../changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
-import useStore from '../../store/useStore';
-import Loader from '../../helperComponents/Loader';
+import useStore from '../../../store/useStore';
+import Loader from '../../../helperComponents/Loader';
 
 const CoverPage: FC = () => {
     const jsonData = useStore.getState().jsonData;

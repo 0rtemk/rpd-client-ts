@@ -4,6 +4,7 @@ import { Container, Box } from '@mui/material';
 import { useState } from "react";
 import ChangeRpdTemplate from "./manager-template-page/steps/ChangeRpdTemplate";
 import CreateRpdTemplateFromYear from "./manager-template-page/steps/CreateRpdTemplateFromYear";
+import CreateRpdTemplateFrom1CExchange from "./manager-template-page/steps/CreateRpdTemplateFrom1CExchange";
 
 
 //тут вообще свалка пока
@@ -40,6 +41,9 @@ export default function Manager() {
                 )}
                 {choise === "createTemplateFromCurrentYear" && (
                     <CreateRpdTemplateFromYear setChoise={setChoise} />
+                )}
+                {choise === "createTemplateFromExchange" && (
+                    <CreateRpdTemplateFrom1CExchange setChoise={setChoise} />
                 )}
             </Box>
         </Container>

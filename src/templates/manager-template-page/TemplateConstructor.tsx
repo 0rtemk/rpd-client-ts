@@ -83,6 +83,9 @@ const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
             setCreateByCriteria(selected.institute, undefined);
             // setChoise("createTemplateFromOtherInstitute");
         }
+        if(selected.workType === 'create' && selected.creationType === '1c') {
+            setChoise("createTemplateFromExchange");
+        }
     }
 
     return (

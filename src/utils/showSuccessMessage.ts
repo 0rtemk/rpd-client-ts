@@ -1,6 +1,6 @@
 import { VariantType, enqueueSnackbar } from "notistack";
 
 export default (message: string) => {
-  const variant: VariantType = 'error';
+  const variant: VariantType = 'success';
   return enqueueSnackbar(message, { variant });
 }

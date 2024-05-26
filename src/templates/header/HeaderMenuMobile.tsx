@@ -54,7 +54,7 @@ const HeaderMenuMobile: FC = () => {
                             'aria-labelledby': 'basic-button',
                         }}
                     >
-                        <Can I="get" a="rop_interface">
+                        {/* <Can I="get" a="rop_interface">
                             <MenuItem onClick={handleClose}>
                                 <ListItemIcon>
                                     <ListAlt />
@@ -95,7 +95,7 @@ const HeaderMenuMobile: FC = () => {
                                     </Link>
                                 </ListItemText>
                             </MenuItem>
-                        </Can>
+                        </Can> */}
                         <Divider />
                         <MenuItem>
                             <ListItemIcon>

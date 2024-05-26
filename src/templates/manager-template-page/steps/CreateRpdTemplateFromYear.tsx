@@ -1,43 +1,33 @@
-import { Box, Button, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import useStore from "../../../store/useStore";
 import Loader from "../../../helperComponents/Loader";
-import { useNavigate } from "react-router-dom";
-import { VariantType, enqueueSnackbar } from "notistack";
+import { TemplateConstructorType } from "../../../types/TemplateConstructorTypes";
+import showErrorMessage from "../../../utils/showErrorMessage";
+import TemplateStatus from "../../../helperComponents/TemplateStatus";
+import useAuth from "../../../store/useAuth";
+import showSuccessMessage from "../../../utils/showSuccessMessage";
 
-interface CreateRpdTemplateFromYear {
-    setChoise: (value: string) => void;
+interface TemplateStatusObject {
+    date: string,
+    status: string,
+    user: string
 }
 
 interface TemplateData {
     id: number;
     disciplins_name: string;
     teacher: string;
+    status: TemplateStatusObject;
 }
 
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
-
-const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise }) => {
+const CreateRpdTemplateFromYear: FC<TemplateConstructorType> = ({ setChoise }) => {
     const selectedTemplateData = useStore.getState().selectedTemplateData;
     const createByCriteria = useStore.getState().createByCriteria;
-    console.log(createByCriteria);
-    const { setJsonData } = useStore();
+    const userName = useAuth.getState().userName;
     const [data, setData] = useState<TemplateData[]>();
-    const navigate = useNavigate();
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+
 
     const fetchData = async () => {
         const params = {
@@ -53,8 +43,7 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
             const response = await axios.get('/api/find-by-criteria', { params });
             setData(response.data);
         } catch (error) {
-            const variant: VariantType = 'error'
-            enqueueSnackbar('Ошибка при получении данных', {variant});
+            showErrorMessage('Ошибка при получении данных');
         }
     };
 
@@ -68,15 +57,16 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
                 year: createByCriteria.year,
                 disciplinsName,
                 id,
+                userName
             });
 
-            if (response.data.status === "record exists") handleOpen()
-            // setJsonData(response.data);
-            console.log(response.data);
-            // navigate("/teacher-interface");
+            if (response.data.status === "record exists") showErrorMessage("Ошибка. Шаблон с текущими данными уже существует");
+            if (response.data === "template created") {
+                showSuccessMessage("Шаблон успешно создан");
+                fetchData();
+            };
         } catch (error) {
-            const variant: VariantType = 'error'
-            enqueueSnackbar('Ошибка создания шаблона', {variant});
+            showErrorMessage('Ошибка создания шаблона');
         }
     }
 
@@ -106,7 +96,9 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
                                 <TableCell>{row.disciplins_name}</TableCell>
                                 <TableCell>{selectedTemplateData.year}</TableCell>
                                 <TableCell>{row.teacher}</TableCell>
-                                <TableCell>Шаблон загружен</TableCell>
+                                <TableCell>
+                                    <TemplateStatus status={row.status}/>
+                                </TableCell>
                                 <TableCell>
                                     <Button variant="outlined" size="small" onClick={() => uploadTempllateData(row.disciplins_name, row.id)}>Создать шаблон</Button>
                                 </TableCell>
@@ -119,22 +111,6 @@ const CreateRpdTemplateFromYear: FC<CreateRpdTemplateFromYear> = ({ setChoise })
             <Button variant="outlined" sx={{ mt: 2 }} onClick={() => setChoise("workingType")}>
                 Назад
             </Button>
-
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <Box sx={{ fontSize: "20px", fontWeight: "600" }}>Ошибка. Шаблон уже существует</Box>
-                    <Box sx={{ py: 2 }}>Перейти к шаблону?</Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                        <Button variant="outlined">Перейти</Button>
-                        <Button variant="outlined" onClick={handleClose}>Закрыть</Button>
-                    </Box>
-                </Box>
-            </Modal>
         </>
     );
 }

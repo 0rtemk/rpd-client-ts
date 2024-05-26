@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import JsonChangeValue from './changeable-elements/JsonChangeValue';
+import JsonChangeValue from '../changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
 
 const ResourceSupportPage: FC = () => {

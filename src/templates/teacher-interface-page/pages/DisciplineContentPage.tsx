@@ -1,15 +1,15 @@
 import { useState, useEffect, FC } from 'react';
 import axios from "axios";
-import useStore from "../../store/useStore";
-import EditableCell from "./changeable-elements/EditableCell";
-import EditableNumber from "./changeable-elements/EditableNumber";
-import JsonChangeValue from './changeable-elements/JsonChangeValue';
-import Loader from "../../helperComponents/Loader";
+import useStore from "../../../store/useStore";
+import EditableCell from "../changeable-elements/EditableCell";
+import EditableNumber from "../changeable-elements/EditableNumber";
+import JsonChangeValue from '../changeable-elements/JsonChangeValue';
+import Loader from "../../../helperComponents/Loader";
 import {
   Box, Button, ButtonGroup, TableContainer, Table, TableHead,
   TableBody, TableRow, TableCell, Paper
 } from '@mui/material';
-import { ObjectHours, DisciplineContentData } from '../../types/DisciplineContentPageTypes';
+import { ObjectHours, DisciplineContentData } from '../../../types/DisciplineContentPageTypes';
 
 const DisciplineContentPage: FC = () => {
     const initialData = useStore.getState().jsonData.content as DisciplineContentData | undefined;

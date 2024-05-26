@@ -24,13 +24,14 @@ const Header: FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                backgroundColor: '#fefefe'
+                backgroundColor: '#fefefe',
+                height: "80px"
             }}
         >
             <HeaderLogo /> 
-            {size.width && size.width > 1090 &&
+            {/* {size.width && size.width > 1090 &&
                 <HeaderNavbar />
-            }
+            } */}
             {size.width && size.width > 1090 && isUserLogged &&
                 <Box className='heder-profile'>
                     <Box component='img' src={defaultUser} alt='user logo' />

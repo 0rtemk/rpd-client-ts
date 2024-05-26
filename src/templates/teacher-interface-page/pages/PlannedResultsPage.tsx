@@ -1,10 +1,10 @@
-import useStore from "../../store/useStore";
+import useStore from "../../../store/useStore";
 import axios from "axios";
 import { FC, useState } from 'react';
-import EditableCell from "./changeable-elements/EditableCell";
+import EditableCell from "../changeable-elements/EditableCell";
 import { Box, Button, ButtonGroup, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
-import Loader from "../../helperComponents/Loader";
-import { PlannedResultsData } from "../../types/DisciplineContentPageTypes";
+import Loader from "../../../helperComponents/Loader";
+import { PlannedResultsData } from "../../../types/DisciplineContentPageTypes";
 
 const PlannedResultsPage: FC = () => {
     const initialData = useStore.getState().jsonData.competencies as PlannedResultsData | undefined;

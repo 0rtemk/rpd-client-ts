@@ -217,12 +217,12 @@ html {
     background: #F7F7F7;
 }
 
-table div {
+.table div {
     width: 100%;
     min-height: 50px;
     margin: 0 !important;
 }
 
-table div:hover {
+.table div:hover {
     background: #dddddd;
 }
