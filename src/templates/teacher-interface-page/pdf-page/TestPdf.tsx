@@ -3,6 +3,7 @@ import PdfReader from './PdfReader.js';
 import { useState } from 'react';
 import useStore from '../../../store/useStore.js';
 import { Box, Button } from '@mui/material';
+import showErrorMessage from '../../../utils/showErrorMessage.js';
 
 export default function TestPdf() {
   const [fileName, setFileName] = useState<string | undefined>(undefined);
@@ -20,7 +21,7 @@ export default function TestPdf() {
       const response = await axios.get("/api/generate-pdf", { responseType: 'blob', params });
       setFileName(response.data);
     } catch (error) {
-      console.error('Ошибка при загрузке PDF файла:', error);
+      showErrorMessage("Ошибка при загрузке PDF файла. Не все поля шаблона заполнены");
     }
     // setDisableButton(false);
   };
