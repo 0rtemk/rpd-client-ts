@@ -24,6 +24,7 @@ interface StoreState {
   jsonData: JsonData;
   selectedTemplateData: SelectedTemplateData;
   createByCriteria: CreateByCriteria;
+  complectId: number | undefined;
   setJsonData: (data: JsonData) => void;
   updateJsonData: (key: string, value: JsonValue) => void;
   setSelectedTemplateData: (
@@ -38,6 +39,7 @@ interface StoreState {
     faculty?: string | undefined,
     year?: string | undefined
   ) => void;
+  setComplectId: (id: number) => void;
 }
 
 const useStore = create<StoreState>()(immer((set) => ({
@@ -54,6 +56,7 @@ const useStore = create<StoreState>()(immer((set) => ({
     faculty: undefined,
     year: undefined
   },
+  complectId: undefined,
   setJsonData: (data) => {
     set((state) => {
       state.jsonData = data;
@@ -86,6 +89,11 @@ const useStore = create<StoreState>()(immer((set) => ({
     set((state) => {
       if (faculty) state.createByCriteria.faculty = faculty;
       if (year) state.createByCriteria.year = year;
+    })
+  },
+  setComplectId: (id) => {
+    set((state) => {
+      state.complectId = id;
     })
   }
 })));

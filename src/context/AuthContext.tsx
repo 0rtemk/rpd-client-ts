@@ -91,8 +91,10 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     AuthClient.post("/refresh")
       .then((res) => {
-        const { accessToken, accessTokenExpiration } = res.data;
+        const { role, fullname, accessToken, accessTokenExpiration } = res.data;
         inMemoryJWT.setToken(accessToken, accessTokenExpiration);
+        updateAbility(role);
+        updateUserName(fullname);
 
         setIsAppReady(true);
         setIsUserLogged(true);

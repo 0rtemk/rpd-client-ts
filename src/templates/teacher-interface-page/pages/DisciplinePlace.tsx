@@ -3,9 +3,14 @@ import JsonChangeValue from '../changeable-elements/JsonChangeValue';
 import { Box } from '@mui/material';
 import Loader from '../../../helperComponents/Loader';
 import { FC } from 'react';
+import CertificationSelector from '../changeable-elements/CertificationSelector';
 
 const DisciplinePlace: FC = () => {
     const data = useStore.getState().jsonData;
+
+    const placeWrapper = () => {
+        if(data.place === "Обязательная часть") return "обязательной части";
+    }
 
     return (
         <Box>
@@ -15,22 +20,21 @@ const DisciplinePlace: FC = () => {
                     Дисциплина 
                     <Box component='span' sx={{ fontWeight: '600' }} > «{data.disciplins_name}» </Box> 
                     относится к 
-                    <Box component='span' sx={{ fontWeight: '600' }} > {data.place} </Box> 
+                    <Box component='span' sx={{ fontWeight: '600' }} > {placeWrapper()} </Box> 
                     учебного плана направления 
-                    <Box component='span' sx={{ fontWeight: '600' }} > «{data.direction_of_study}» </Box>.
+                    <Box component='span' sx={{ fontWeight: '600' }} > «{data.direction}» </Box>.
                     Дисциплина преподается в 
                     <Box component='span' sx={{ fontWeight: '600' }} > {data.semester} </Box> 
                     семестре, на 
                     <Box component='span' sx={{ fontWeight: '600' }} > {Math.ceil(Number(data.semester) / 2)} </Box>
-                    курсе, форма промежуточной аттестации – 
-                    <Box component='span' sx={{ fontWeight: '600' }} > {data.certification}</Box>.
+                    курсе
+                    <Box sx={{pt: 2}}> 
+                        форма промежуточной аттестации – <CertificationSelector certification={data.certification} />
+                    </Box>
                 </Box> : 
                 <Loader />
             }
-
-            <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
-                <JsonChangeValue elementName='place_more_text'/>
-            </Box>
+            <JsonChangeValue elementName='place_more_text'/>
         </Box>
     );
 }

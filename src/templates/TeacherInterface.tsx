@@ -16,9 +16,11 @@ import ResourceSupportPage from './teacher-interface-page/pages/ResourceSupportP
 import ScopeDisciplinePage from './teacher-interface-page/pages/ScopeDisciplinePage';
 import TestPdf from './teacher-interface-page/pdf-page/TestPdf';  // Assuming PDF Test view
 import TeacherInterfaceTemplates from './teacher-interface-page/TeacherInterfaceTemplates';
+import useAuth from '../store/useAuth';
 
 const TeacherInterface: FC = () => {
-    const [choise, setChoise] = useState<string>("selectTemplate");
+    const userRole = useAuth.getState().userRole;
+    const [choise, setChoise] = useState<string>(userRole ==="rop" ? "coverPage" : "selectTemplate");
 
     return (
         <Container maxWidth="xl" sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -27,7 +29,7 @@ const TeacherInterface: FC = () => {
                 :
                 <>
                     <Box minWidth={400} maxWidth={400} my={4} mr={2}>
-                        <Box height={600} py={1} sx={{ position: "sticky", top: "20px", backgroundColor: '#fefefe' }}>
+                        <Box py={1} sx={{ position: "sticky", top: "20px", backgroundColor: '#fefefe' }}>
                             <RpdList RpdListItems={RpdListItems} setChoise={setChoise} />
                         </Box>
                     </Box>

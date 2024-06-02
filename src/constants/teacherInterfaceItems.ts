@@ -7,7 +7,7 @@ export const RpdListItems: RpdListItem[] = [
     },
     {
         id: "approvalPage",
-        text: "Лист согласования"
+        text: "Лист согласования (В разработке)"
     },
     {
         id: "aimsPage",
@@ -40,9 +40,9 @@ export const RpdListItems: RpdListItem[] = [
     {
         id: "resourceSupport",
         text: "Ресурсное обеспечение"
-    },
-    {
-        id: "testPdf",
-        text: "Тест PDF"
     }
+    // {
+    //     id: "testPdf",
+    //     text: "Тест PDF"
+    // }
 ]

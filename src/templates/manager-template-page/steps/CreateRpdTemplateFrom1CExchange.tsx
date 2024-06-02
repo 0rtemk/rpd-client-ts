@@ -8,6 +8,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectCh
 import showSuccessMessage from "../../../utils/showSuccessMessage";
 import TemplateStatus from "../../../helperComponents/TemplateStatus";
 import useAuth from "../../../store/useAuth";
+import TemplateMenu from "./templateMenu/TemplateMenu";
 
 interface TemplateStatusObject {
     date: string,
@@ -17,6 +18,7 @@ interface TemplateStatusObject {
 
 interface TemplateData {
     id: number;
+    id_profile_template: number;
     discipline: string;
     teachers: string[];
     teacher: string;
@@ -26,6 +28,7 @@ interface TemplateData {
 
 const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChoise }) => {
     const selectedTemplateData = useStore.getState().selectedTemplateData;
+    const complectId = useStore.getState().complectId;
     const [data, setData] = useState<TemplateData[]>();
     const [selectedTeachers, setSelectedTeachers] = useState<{ [key: number]: string }>({});
     const userName = useAuth.getState().userName;
@@ -38,18 +41,8 @@ const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChois
     };
 
     const fetchData = async () => {
-        const params = {
-            faculty: selectedTemplateData.faculty,
-            levelEducation: selectedTemplateData.levelEducation,
-            directionOfStudy: selectedTemplateData.directionOfStudy,
-            profile: selectedTemplateData.profile,
-            formEducation: selectedTemplateData.formEducation,
-            year: Number(selectedTemplateData.year)
-        };
-
         try {
-            const response = await axios.get('/api/find-rpd', { params });
-            console.log(response.data);
+            const response = await axios.post('/api/find-rpd', { complectId });
             setData(response.data);
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
@@ -64,7 +57,8 @@ const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChois
         };
         try {
             const response = await axios.post('/api/create-profile-template-from-1c', {
-                id,
+                id_1c: id,
+                complectId,
                 teacher,
                 year: selectedTemplateData.year,
                 discipline,
@@ -139,15 +133,22 @@ const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChois
                                     </FormControl>
                                 </TableCell>
                                 <TableCell>
-                                    <TemplateStatus status={row.status}/>
+                                    <TemplateStatus status={row.status} />
                                 </TableCell>
                                 <TableCell>
-                                    {row.status.status === "Выгружен из 1С" &&
-                                        <Button 
-                                            variant="outlined" 
-                                            size="small" 
+                                    {row.status.status === "Выгружен из 1С" ?
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
                                             onClick={() => createTemplateData(row.id, row.discipline)}
                                         >Создать шаблон</Button>
+                                        :
+                                        <TemplateMenu 
+                                            id={row.id_profile_template} 
+                                            teacher={row.teacher}
+                                            status={row.status.status}
+                                            fetchData={fetchData}
+                                        />
                                     }
                                 </TableCell>
                             </TableRow>

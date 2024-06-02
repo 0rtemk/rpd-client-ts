@@ -29,45 +29,27 @@ const CoverPage: FC = () => {
             <Box sx={{ fontWeight: '600', py: 2}}>Рабочая программа дисциплины</Box>
             <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
                 <Box sx={{ fontWeight: '600' }}>Название дисциплины</Box>
-                { jsonData.disciplins_name ? 
-                    <Box>{jsonData.disciplins_name}</Box> : 
-                    <Loader />
-                }
+                <Box>{jsonData.disciplins_name || <Loader />}</Box>
             </Box>
             <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
                 <Box sx={{ fontWeight: '600' }}>Направление подготовки</Box>
-                { jsonData.direction_of_study ? 
-                    <Box>{jsonData.direction_of_study}</Box> : 
-                    <Loader />
-                }
+                <Box>{jsonData.direction || <Loader />}</Box>
             </Box>
             <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
                 <Box sx={{ fontWeight: '600' }}>Профиль</Box>
-                { jsonData.profile ? 
-                    <Box>{jsonData.profile}</Box> : 
-                    <Loader />
-                }
+                <Box>{jsonData.profile || <Loader />}</Box>
             </Box>
             <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
                 <Box sx={{ fontWeight: '600' }}>Уровень высшего образования</Box>
-                { jsonData.level_education ? 
-                    <Box>{jsonData.level_education}</Box> : 
-                    <Loader />
-                }
+                <Box>{jsonData.education_level || <Loader />}</Box>
             </Box>
             <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
                 <Box sx={{ fontWeight: '600' }}>Форма обучения</Box>
-                { jsonData.form_education ? 
-                    <Box>{jsonData.form_education}</Box> : 
-                    <Loader />
-                }
+                <Box>{jsonData.education_form || <Loader />}</Box>
             </Box>
             <Box sx={{ p: 1, border: '1px dashed grey', my: 1 }}>
                 <Box sx={{ fontWeight: '600' }}>Год обучения</Box>
-                { jsonData.year ? 
-                    <Box>{jsonData.year}</Box> : 
-                    <Loader />
-                }
+                <Box>{jsonData.year || <Loader />}</Box>
             </Box>
         </Box>
     );

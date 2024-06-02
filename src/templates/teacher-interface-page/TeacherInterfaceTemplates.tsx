@@ -19,10 +19,10 @@ interface TemplateData {
     id: number;
     disciplins_name: string;
     faculty: string;
-    direction_of_study: string;
+    direction: string;
     profile: string;
-    level_education: string;
-    form_education: string;
+    education_level: string;
+    education_form: string;
     year: number;
     status: TemplateStatusObject;
 }
@@ -65,7 +65,7 @@ const TeacherInterfaceTemplates: FC<TemplateConstructorType> = ({ setChoise }) =
 
     const uploadTemplateData = async (id: number) => {
         try {
-            const response = await axios.get(`/api/rpd-profile-templates?id=${id}`);
+            const response = await axios.post(`/api/rpd-profile-templates`, {id});
             setJsonData(response.data);
             setChoise("coverPage");
         } catch (error) {
@@ -108,10 +108,10 @@ const TeacherInterfaceTemplates: FC<TemplateConstructorType> = ({ setChoise }) =
                             >
                                 <TableCell>{row.disciplins_name}</TableCell>
                                 <TableCell>{row.faculty}</TableCell>
-                                <TableCell>{row.level_education}</TableCell>
-                                <TableCell>{row.direction_of_study}</TableCell>
+                                <TableCell>{row.education_level}</TableCell>
+                                <TableCell>{row.direction}</TableCell>
                                 <TableCell>{row.profile}</TableCell>
-                                <TableCell>{row.form_education}</TableCell>
+                                <TableCell>{row.education_form}</TableCell>
                                 <TableCell>{row.year}</TableCell>
                                 <TableCell>
                                     <TemplateStatus status={row.status} />

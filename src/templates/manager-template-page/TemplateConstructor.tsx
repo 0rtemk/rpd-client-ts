@@ -1,96 +1,56 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import useStore from "../../store/useStore";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { OptionType } from "../../types/SelectorTypes";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { TemplateConstructorType } from "../../types/TemplateConstructorTypes";
-import { selectorOptions } from "../../constants/selectorOptions";
 import { templateDataTitles } from "../../constants/templateDataTitles";
-import { VariantType, enqueueSnackbar } from "notistack";
+import showErrorMessage from "../../utils/showErrorMessage";
+import axios from "axios";
+import showSuccessMessage from "../../utils/showSuccessMessage";
+import Loader from "../../helperComponents/Loader";
 
 const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
-    const { selectedTemplateData, setCreateByCriteria } = useStore();
+    const selectedTemplateData = useStore.getState().selectedTemplateData;
+    const { setComplectId } = useStore();
+    const [createComplectStatus, setCreateComplectStatus] = useState<string>("pending");
+    const [isFindComplect, setIsFindComplect] = useState<boolean | undefined>(undefined);
 
-    const [selected, setSelected] = useState({
-        workType: '',
-        creationType: '',
-        institute: '',
-        year: '',
-    });
-
-    const handleSelectChange = (name: keyof typeof selected) => (event: SelectChangeEvent) => {
-        setSelected(prev => ({
-            ...prev,
-            [name]: event.target.value,
-            ...(name === 'workType' && { creationType: '', year: '', institute: '' }),
-            ...(name === 'creationType' && { year: '', institute: '' }),
-        }));
-    };
-
-    const renderSelector = (
-        name: keyof typeof selected,
-        label: string,
-        options: OptionType[],
-        dependsOn?: keyof typeof selected
-    ) => {
-        if (dependsOn && !selected[dependsOn]) {
-            return null;
-        }
-
-        return (
-            <FormControl fullWidth margin="normal">
-                <InputLabel>{label}</InputLabel>
-                <Select
-                    value={selected[name]}
-                    label={label}
-                    onChange={handleSelectChange(name)}
-                    key={name}
-                >
-                    {options.map(option => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-        );
-    };
-
-    const allSelectorsFilled = selected.workType && (
-        selected.workType !== 'create' ||
-        (selected.workType === 'create' && selected.creationType && (
-            (selected.creationType !== 'currentYearTemplate' || (selected.creationType === 'currentYearTemplate' && selected.year)) &&
-            (selected.creationType !== 'otherInstituteTemplate' || (selected.creationType === 'otherInstituteTemplate' && selected.institute))
-        ))
-    );
-
-    const setSelectType = () => {
-        const variant: VariantType = 'error'
-        if(selected.year === selectedTemplateData.year){
-            enqueueSnackbar('Невозможно создать шаблон. Параметры года набора должны быть различны', {variant});
-            return
-        }
-        if(selected.institute === selectedTemplateData.faculty){
-            enqueueSnackbar('Невозможно создать шаблон. Параметры института должны быть различны', {variant});
-            return
-        }
-        
-        if (selected.workType === 'edit') setChoise("changeTemplate");
-        if (selected.workType === 'create' && selected.creationType === 'currentYearTemplate') {
-            setCreateByCriteria(undefined, selected.year);
-            setChoise("createTemplateFromCurrentYear");
-        }
-        if (selected.workType === 'create' && selected.creationType === 'otherInstituteTemplate') {
-            setCreateByCriteria(selected.institute, undefined);
-            // setChoise("createTemplateFromOtherInstitute");
-        }
-        if(selected.workType === 'create' && selected.creationType === '1c') {
-            setChoise("createTemplateFromExchange");
+    const fetchData = async () => {
+        try {
+            const responce = await axios.post('/api/find_rpd_complect', {
+                data: selectedTemplateData
+            })
+            if (responce.data === "NotFound") setIsFindComplect(false);
+            else {
+                setIsFindComplect(true);
+                setComplectId(responce.data.id);
+            }
+        } catch (error) {
+            showErrorMessage("Ошибка загрузки данных");
         }
     }
 
+    const createRpdComplect = async () => {
+        try {
+            setCreateComplectStatus("loading");
+            const responce = await axios.post('/api/create_rpd_complect', {
+                data: selectedTemplateData
+            });
+            console.log(responce.data);
+            setComplectId(responce.data);
+            setCreateComplectStatus("success");
+            showSuccessMessage("Комплект РПД создан успешно");
+        } catch (error) {
+            showErrorMessage("Ошибка загрузки данных");
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, []);
+
     return (
         <>
-            <Box>Шаг 2. Создание/редактирование шаблона</Box>
+            <Box>Шаг 2. Создание/редактирование комплекта РПД</Box>
             <Box sx={{ py: 2, fontSize: "18px", fontWeight: "600" }}>Выбранные данные:</Box>
             {Object.entries(selectedTemplateData).map(([key, value]) => (
                 <Box sx={{ pl: "40px" }}>
@@ -98,20 +58,54 @@ const TemplateConstructor: FC<TemplateConstructorType> = ({ setChoise }) => {
                     {value ? value : "Данные не найдены"}
                 </Box>
             ))}
-            <Box width={450}>
-                {renderSelector('workType', 'Выберите тип работы с РПД', selectorOptions.workType)}
-                {selected.workType === 'create' && renderSelector('creationType', 'Выберите тип создания РПД', selectorOptions.creationType)}
-                {selected.creationType === 'currentYearTemplate' && renderSelector('year', 'Выберите год набора', selectorOptions.year)}
-                {selected.creationType === 'otherInstituteTemplate' && renderSelector('institute', 'Выберите институт', selectorOptions.institute)}
-            </Box>
-            <Button variant="outlined" onClick={() => setChoise("selectData")}>
-                Назад
-            </Button>
-            {allSelectorsFilled && (
-                <Button variant="outlined" onClick={setSelectType}>
-                    Продолжить
-                </Button>
-            )}
+            {isFindComplect === undefined ?
+                <Loader />
+                :
+                <>
+                    {!isFindComplect ?
+                        <Box sx={{ py: 2 }}>
+                            {createComplectStatus === "pending" &&
+                                <>
+                                    <Box>Комплект РПД не найден. Создать на основе 1С выгрузки?</Box>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        onClick={() => createRpdComplect()}
+                                    >Созать</Button>
+                                </>
+                            }
+                            {createComplectStatus === "loading" &&
+                                <Box sx={{ p: 1, display: 'flex' }}>
+                                    <CircularProgress color="inherit" size="1rem" />
+                                    <Box sx={{ px: 1 }}>Идет создание комплекта РПД. Это может занять какое-то время</Box>
+                                </Box>
+                            }
+                            {createComplectStatus === "success" &&
+                                <Box>
+                                    <Box>Шаблон создан успешно. Перейти к редактированию?</Box>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        onClick={() => setChoise("createTemplateFromExchange")}
+                                    >Перейти</Button>
+                                </Box>
+                            }
+
+                        </Box>
+                        :
+                        <Box sx={{ py: 2 }}>
+                            <Box>Комплект РПД загружен. Перейти к редактированию?</Box>
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => setChoise("createTemplateFromExchange")}
+                            >Перейти</Button>
+                        </Box>
+                    }
+                </>
+            }
+
+            <Button variant="outlined" onClick={() => setChoise("selectData")}>Назад</Button>
         </>
     );
 }

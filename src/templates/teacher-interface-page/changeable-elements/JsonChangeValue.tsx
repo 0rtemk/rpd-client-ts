@@ -1,14 +1,13 @@
-import { useState, useRef, FC } from 'react';
-import { Button, Box } from '@mui/material';
+import { useState, FC, MouseEvent } from 'react';
+import { Button, Box, Menu, MenuItem, ListItemIcon, ListItemText, Typography, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
-import { styled } from '@mui/system';
 import axios from 'axios';
 import useStore from '../../../store/useStore';
-import Loader from '../../../helperComponents/Loader';
 import TextEditor from './TextEditor';
-import { VariantType, useSnackbar } from 'notistack';
+import showSuccessMessage from '../../../utils/showSuccessMessage';
+import showErrorMessage from '../../../utils/showErrorMessage';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DownloadIcon from '@mui/icons-material/Download';
 
 interface JsonChangeValue {
     elementName: string;
@@ -17,14 +16,22 @@ interface JsonChangeValue {
 const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
     const { updateJsonData } = useStore();
     const elementValue = useStore.getState().jsonData[elementName];
-    const { enqueueSnackbar } = useSnackbar();
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [changeableValue, setChangeableValue] = useState<string>(elementValue);
-    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+    const [changeableValue, setChangeableValue] = useState<string>(elementValue || "");
 
     const handleEditClick = () => {
         setIsEditing(true);
+    };
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null);
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
     };
 
     const saveContent = async (htmlValue: string) => {
@@ -32,87 +39,100 @@ const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
         const templateId = useStore.getState().jsonData.id;
 
         try {
-            const response = await axios.put(`/api/update-json-value/${templateId}`, {
+            await axios.put(`/api/update-json-value/${templateId}`, {
                 fieldToUpdate: elementName,
                 value: htmlValue
             });
 
-            const variant: VariantType = 'success'
-            enqueueSnackbar('Данные успешно сохранены', {variant});
+            showSuccessMessage('Данные успешно сохранены');
             updateJsonData(elementName, htmlValue)
             setChangeableValue(htmlValue);
         } catch (error) {
-            const variant: VariantType = 'error'
-            enqueueSnackbar('Ошибка сохранения данных', {variant});
+            showErrorMessage('Ошибка сохранения данных');
         }
     };
 
-    if (!changeableValue) {
-        return <Loader />
-    }
-
-    const TextareaAutosize = styled(BaseTextareaAutosize)(() => `
-        box-sizing: border-box;
-        width: 100%;
-        font-family: 'IBM Plex Sans', sans-serif;
-        font-size: 0.875rem;
-        font-weight: 400;
-        line-height: 1.5;
-        padding: 8px 12px;
-        border-radius: 8px;
-        color: #1C2025;
-        background: #ffffff;
-        border: 1px solid #DAE2ED;
-        box-shadow: 0px 2px 2px #F3F6F9;
-      
-        &:hover {
-          border-color: #3399FF;
-        }
-      
-        &:focus {
-          border-color: #3399FF;
-          box-shadow: 0 0 0 3px #b6daff;
-        }
-      
-        // firefox
-        &:focus-visible {
-          outline: 0;
-        }
-      `,
-    );
-
     return (
-        <>
+        <Box sx={{ 
+            p: 1, 
+            border: '1px dashed grey', 
+            my: 1, 
+            textAlign: 'justify',
+            '& ol': {
+                p: 1
+            },
+            '& li': {
+                ml: "60px",
+            },
+            '& p': {
+                p: 1,
+                textIndent: "1.5em"
+            }
+        }}>
             {isEditing ? (
-                // <Box>
-                //     <TextareaAutosize
-                //         ref={textAreaRef}
-                //         aria-label="empty textarea"
-                //         placeholder="Empty"
-                //         id={elementName}
-                //         defaultValue={changeableValue}
-                //         sx={{my: 1}}
-                //     />
-                //     <Button
-                //         variant="outlined"
-                //         size="small"
-                //         endIcon={<SaveAltIcon color='primary' />}
-                //         onClick={() => handleSaveClick()}
-                //     >сохранить изменения</Button>
-                // </Box>
-                <TextEditor value={changeableValue} saveContent={saveContent} setIsEditing={setIsEditing}/>
+                <TextEditor value={changeableValue} saveContent={saveContent} setIsEditing={setIsEditing} />
             ) : (
                 <Box>
-                    <Box dangerouslySetInnerHTML={{ __html: changeableValue }} sx={{py: 1}}></Box>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        endIcon={<EditIcon color='primary' />}
-                        onClick={() => handleEditClick()}
-                    >редактировать</Button>
+                    {changeableValue ?
+                        <Box dangerouslySetInnerHTML={{ __html: changeableValue }} sx={{ py: 1 }}></Box>
+                        :
+                        <Box sx={{
+                            py: 2,
+                            color: "grey",
+                            fontStyle: "italic"
+                        }}>Данные не найдены</Box>
+                    }
+                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            endIcon={<EditIcon color='primary' />}
+                            onClick={() => handleEditClick()}
+                        >редактировать</Button>
+                        <IconButton
+                            id="basic-button"
+                            size="small"
+                            aria-controls={open ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            onClick={handleClick}
+                        >
+                            <MoreHorizIcon sx={{ color: "black" }} />
+                        </IconButton>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem disabled>
+                                <ListItemIcon>
+                                    <DownloadIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Typography variant="button" display="block" gutterBottom color="grey" m="0">
+                                        Загрузить данные из шаблона<br/> другого года (в разработке)
+                                    </Typography>
+                                </ListItemText>
+                            </MenuItem>
+                            <MenuItem disabled>
+                                <ListItemIcon>
+                                    <DownloadIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    <Typography variant="button" display="block" gutterBottom color="grey" m="0">
+                                        Загрузить данные из шаблона<br/> другого института (в разработке)
+                                    </Typography>
+                                </ListItemText>
+                            </MenuItem>
+                        </Menu>
+                    </Box>
                 </Box>
             )}
-        </>
+        </Box>
     );
 }
 

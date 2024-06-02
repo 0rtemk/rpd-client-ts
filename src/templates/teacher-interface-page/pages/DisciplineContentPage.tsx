@@ -6,15 +6,51 @@ import EditableNumber from "../changeable-elements/EditableNumber";
 import JsonChangeValue from '../changeable-elements/JsonChangeValue';
 import Loader from "../../../helperComponents/Loader";
 import {
-  Box, Button, ButtonGroup, TableContainer, Table, TableHead,
-  TableBody, TableRow, TableCell, Paper
+    Box, Button, ButtonGroup, TableContainer, Table, TableHead,
+    TableBody, TableRow, TableCell, Paper
 } from '@mui/material';
 import { ObjectHours, DisciplineContentData } from '../../../types/DisciplineContentPageTypes';
+import showSuccessMessage from '../../../utils/showSuccessMessage';
+import showErrorMessage from '../../../utils/showErrorMessage';
+
+interface StudyLoad {
+    id: string;
+    name: string;
+}
 
 const DisciplineContentPage: FC = () => {
     const initialData = useStore.getState().jsonData.content as DisciplineContentData | undefined;
-    const initialDataLength = initialData ? Object.keys(initialData).length : 0;
+    const dataHours: StudyLoad[] = useStore.getState().jsonData.study_load;
+    const maxHours: ObjectHours = dataHours.reduce((acc, item) => {
+        const hours = parseFloat(item.id);
 
+        switch (item.name) {
+            case 'СРС':
+                acc.independent_work += hours;
+                break;
+            case 'Практические':
+                acc.seminars += hours;
+                acc.lect_and_sems += hours;
+                break;
+            case 'Лекции':
+                acc.lectures += hours;
+                acc.lect_and_sems += hours;
+                break;
+            default:
+                break;
+        }
+
+        acc.all += hours;
+
+        return acc;
+    }, {
+        all: 0,
+        lectures: 0,
+        seminars: 0,
+        lect_and_sems: 0,
+        independent_work: 0
+    });
+    const initialDataLength = initialData ? Object.keys(initialData).length : 0;
     const { updateJsonData } = useStore();
     const [data, setData] = useState<DisciplineContentData | undefined>(initialData);
     const [nextId, setNextId] = useState<number>(initialDataLength);
@@ -34,7 +70,7 @@ const DisciplineContentPage: FC = () => {
         let independent_work = 0;
 
         if (data) {
-            Object.keys(data).forEach((key)  => {
+            Object.keys(data).forEach((key) => {
                 const row = data[key];
                 all += row.lectures + row.seminars + row.independent_work;
                 lectures += row.lectures;
@@ -64,7 +100,7 @@ const DisciplineContentPage: FC = () => {
     };
 
     const handleValueChange = (id: number, key: string, value: string | number) => {
-        if(!data) return;
+        if (!data) return;
 
         const newData = {
             ...data,
@@ -76,10 +112,24 @@ const DisciplineContentPage: FC = () => {
         setData(newData);
     };
 
+    function compareObjects(object1: ObjectHours, object2: ObjectHours) {
+        if (Object.keys(object1).length !== Object.keys(object2).length) return false;
+
+        for (let key of Object.keys(object1)) {
+            //@ts-expect-error
+            if (Number(object1[key]) !== Number(object2[key])) return false;
+        }
+
+        return true;
+    }
+
     const saveData = async () => {
-        if(!data) return;
-        //change this later
-        const fileName = "ivt_bakalavr";
+        if (!data) return;
+        if (!compareObjects(summ, maxHours)) {
+            showErrorMessage("Ошибка заполнения данных. Данные по часам не совпадают");
+            return;
+        }
+        const id = useStore.getState().jsonData.id;
 
         const filteredData = Object.entries(data).reduce((acc: DisciplineContentData, [key, value]) => {
             if (value.theme || value.lectures || value.seminars || value.independent_work) {
@@ -89,19 +139,25 @@ const DisciplineContentPage: FC = () => {
         }, {});
 
         try {
-            const response = await axios.put(`/api/update-json-value/${fileName}`, {
+            const response = await axios.put(`/api/update-json-value/${id}`, {
                 fieldToUpdate: "content",
                 value: filteredData
             });
 
             updateJsonData("content", filteredData);
             setData(filteredData);
+            showSuccessMessage("Данные успешно сохранены")
         } catch (error) {
-            console.error(error);
+            showErrorMessage("Ошибка сохранения данных")
         }
     };
 
-    if (!data) return <Loader />
+    const validateHours = (hours: number, maxHours: number) => {
+        if (Number(hours) !== Number(maxHours)) return "red"
+        return "green";
+    }
+
+    // if (!data) return <Loader />
 
     return (
         <Box>
@@ -119,7 +175,7 @@ const DisciplineContentPage: FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.keys(data).map((row, index) => (
+                        {data && Object.keys(data).map((row, index) => (
                             <TableRow key={index}>
                                 <TableCell>
                                     <EditableCell
@@ -155,11 +211,21 @@ const DisciplineContentPage: FC = () => {
                         ))}
                         <TableRow>
                             <TableCell>Итого за семестр / курс</TableCell>
-                            <TableCell>{summ.all}</TableCell>
-                            <TableCell>{summ.lectures}</TableCell>
-                            <TableCell>{summ.seminars}</TableCell>
-                            <TableCell>{summ.lect_and_sems}</TableCell>
-                            <TableCell>{summ.independent_work}</TableCell>
+                            <TableCell sx={{ color: validateHours(summ.all, maxHours.all) }}>
+                                {summ.all} / {maxHours.all}
+                            </TableCell>
+                            <TableCell sx={{ color: validateHours(summ.lectures, maxHours.lectures) }}>
+                                {summ.lectures} / {maxHours.lectures}
+                            </TableCell>
+                            <TableCell sx={{ color: validateHours(summ.seminars, maxHours.seminars) }}>
+                                {summ.seminars} / {maxHours.seminars}
+                            </TableCell>
+                            <TableCell sx={{ color: validateHours(summ.lect_and_sems, maxHours.lect_and_sems) }}>
+                                {summ.lect_and_sems} / {maxHours.lect_and_sems}
+                            </TableCell>
+                            <TableCell sx={{ color: validateHours(summ.independent_work, maxHours.independent_work) }}>
+                                {summ.independent_work} / {maxHours.independent_work}
+                            </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
