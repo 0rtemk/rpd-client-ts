@@ -17,15 +17,25 @@ import ScopeDisciplinePage from './teacher-interface-page/pages/ScopeDisciplineP
 import TestPdf from './teacher-interface-page/pdf-page/TestPdf';  // Assuming PDF Test view
 import TeacherInterfaceTemplates from './teacher-interface-page/TeacherInterfaceTemplates';
 import useAuth from '../store/useAuth';
+import useStore from '../store/useStore';
+import { useNavigate } from 'react-router-dom';
 
 const TeacherInterface: FC = () => {
     const userRole = useAuth.getState().userRole;
-    const [choise, setChoise] = useState<string>(userRole ==="rop" ? "coverPage" : "selectTemplate");
+    const [choise, setChoise] = useState<string>(userRole === "rop" ? "coverPage" : "selectTemplate");
+    const jsonData = useStore.getState().jsonData;
+    const navigate = useNavigate();
+    console.log(jsonData);
+
+    if (!Object.keys(jsonData).length) {
+        if (userRole === "rop") navigate("/manager");
+        if (userRole === "teacher" && choise !== "selectTemplate") setChoise("selectTemplate");
+    }
 
     return (
         <Container maxWidth="xl" sx={{ display: 'flex', justifyContent: 'space-between' }}>
             {choise === "selectTemplate" ?
-                <TeacherInterfaceTemplates setChoise={setChoise} /> 
+                <TeacherInterfaceTemplates setChoise={setChoise} />
                 :
                 <>
                     <Box minWidth={400} maxWidth={400} my={4} mr={2}>
