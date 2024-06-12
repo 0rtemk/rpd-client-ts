@@ -72,11 +72,11 @@ const DisciplineContentPage: FC = () => {
         if (data) {
             Object.keys(data).forEach((key) => {
                 const row = data[key];
-                all += row.lectures + row.seminars + row.independent_work;
-                lectures += row.lectures;
-                seminars += row.seminars;
-                lect_and_sems += row.lectures + row.seminars;
-                independent_work += row.independent_work;
+                all += Number(row.lectures) + Number(row.seminars) + Number(row.independent_work);
+                lectures += Number(row.lectures);
+                seminars += Number(row.seminars);
+                lect_and_sems += Number(row.lectures) + Number(row.seminars);
+                independent_work += Number(row.independent_work);
             });
 
             setSumm({
