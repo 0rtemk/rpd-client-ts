@@ -1,5 +1,5 @@
 import { useState, useEffect, FC } from 'react';
-import { ActionMeta, SingleValue } from 'react-select';
+import { SingleValue } from 'react-select';
 import Select from 'react-select';
 import Selector from './Selector';
 import Loader from '../../helperComponents/Loader';
@@ -102,7 +102,7 @@ const Selectors: FC<Selectors> = ({ setChoise }) => {
                 return [];
             }
         }
-        if (indicator && indicator === 'lastChild') return Object.entries(currentData).map(([key, value]) => ({ label: String(value), value: String(value) }));
+        if (indicator && indicator === 'lastChild') return Object.values(currentData).map((value) => ({ label: String(value), value: String(value) }));
         return Object.keys(currentData).map(key => ({ label: key, value: key }));
     };
 

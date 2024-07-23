@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { TemplateConstructorType } from "../../../types/TemplateConstructorTypes";
 import useStore from "../../../store/useStore";
-import axios from "axios";
 import showErrorMessage from "../../../utils/showErrorMessage";
 import Loader from "../../../helperComponents/Loader";
 import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
@@ -9,6 +8,7 @@ import showSuccessMessage from "../../../utils/showSuccessMessage";
 import TemplateStatus from "../../../helperComponents/TemplateStatus";
 import useAuth from "../../../store/useAuth";
 import TemplateMenu from "./templateMenu/TemplateMenu";
+import { axiosBase } from "../../../fetchers/baseURL";
 
 interface TemplateStatusObject {
     date: string,
@@ -24,6 +24,15 @@ interface TemplateData {
     teacher: string;
     semester: number;
     status: TemplateStatusObject;
+}
+
+export interface CreateTemplateDataParams {
+    id_1c: number;
+    complectId: number | undefined;
+    teacher: string;
+    year: string | undefined;
+    discipline: string;
+    userName: string | undefined;
 }
 
 const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChoise }) => {
@@ -42,10 +51,11 @@ const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChois
 
     const fetchData = async () => {
         try {
-            const response = await axios.post('/api/find-rpd', { complectId });
+            const response = await axiosBase.post('find-rpd', { complectId });
             setData(response.data);
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     };
 
@@ -56,14 +66,16 @@ const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChois
             return
         };
         try {
-            const response = await axios.post('/api/create-profile-template-from-1c', {
+            const params: CreateTemplateDataParams = {
                 id_1c: id,
                 complectId,
                 teacher,
                 year: selectedTemplateData.year,
                 discipline,
                 userName
-            });
+            };
+
+            const response = await axiosBase.post('create-profile-template-from-1c', { params });
 
             if (response.data === "record exists") showErrorMessage("Ошибка. Шаблон с текущими данными уже существует");
             if (response.data === "template created") {
@@ -72,6 +84,7 @@ const CreateRpdTemplateFrom1CExchange: FC<TemplateConstructorType> = ({ setChois
             };
         } catch (error) {
             showErrorMessage("Ошибка. Не удалось создать шаблон");
+            console.error(error);
         }
     }
 

@@ -1,13 +1,13 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
-import useStore from "../../../store/useStore";
+import useStore, { SelectedTemplateData, SelectTeacherParams } from "../../../store/useStore";
 import Loader from "../../../helperComponents/Loader";
 import { TemplateConstructorType } from "../../../types/TemplateConstructorTypes";
 import showErrorMessage from "../../../utils/showErrorMessage";
 import showSuccessMessage from "../../../utils/showSuccessMessage";
 import TemplateStatus from "../../../helperComponents/TemplateStatus";
 import useAuth from "../../../store/useAuth";
+import { axiosBase } from "../../../fetchers/baseURL";
 
 interface TemplateStatusObject {
     date: string,
@@ -28,20 +28,21 @@ const ChangeRpdTemplate: FC<TemplateConstructorType> = ({ setChoise }) => {
     const [data, setData] = useState<TemplateData[]>();
 
     const fetchData = async () => {
-        const params = {
+        const params: SelectedTemplateData = {
             faculty: selectedTemplateData.faculty,
             levelEducation: selectedTemplateData.levelEducation,
             directionOfStudy: selectedTemplateData.directionOfStudy,
             profile: selectedTemplateData.profile,
             formEducation: selectedTemplateData.formEducation,
-            year: Number(selectedTemplateData.year)
+            year: selectedTemplateData.year
         };
 
         try {
-            const response = await axios.get('/api/find-by-criteria', { params });
+            const response = await axiosBase.get('find-by-criteria', { params });
             setData(response.data);
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     };
 
@@ -50,12 +51,13 @@ const ChangeRpdTemplate: FC<TemplateConstructorType> = ({ setChoise }) => {
     }, []);
 
     const sendTemplateToTeacher = async (id: number, teacher: string) => {
+        const params: SelectTeacherParams = {
+            id,
+            teacher,
+            userName
+        }
         try {
-            const responce = await axios.post(`/api/send-template-to-teacher`, {
-                id,
-                teacher,
-                userName
-            });
+            const responce = await axiosBase.post(`send-template-to-teacher`, { params });
 
             if (responce.data === "UserNotFound") showErrorMessage("Ошибка. Пользователь не найден");
             if (responce.data === "TemplateAlreadyBinned") showErrorMessage("Ошибка. Данный шаблон уже отправлен преподавателю");
@@ -64,7 +66,8 @@ const ChangeRpdTemplate: FC<TemplateConstructorType> = ({ setChoise }) => {
                 fetchData();
             };
         } catch (error) {
-            console.log(error);
+            showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     }
 

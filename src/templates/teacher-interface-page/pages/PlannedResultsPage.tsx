@@ -1,10 +1,12 @@
 import useStore from "../../../store/useStore";
-import axios from "axios";
 import { FC, useState } from 'react';
-import EditableCell from "../changeable-elements/EditableCell";
 import { Box, Button, ButtonGroup, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Paper } from '@mui/material';
 import Loader from "../../../helperComponents/Loader";
 import { PlannedResultsData } from "../../../types/DisciplineContentPageTypes";
+import { EditableCell } from "../changeable-elements/EditableCell";
+import showSuccessMessage from "../../../utils/showSuccessMessage";
+import showErrorMessage from "../../../utils/showErrorMessage";
+import { axiosBase } from "../../../fetchers/baseURL";
 
 const PlannedResultsPage: FC = () => {
     const initialData = useStore.getState().jsonData.competencies as PlannedResultsData | undefined;
@@ -35,8 +37,7 @@ const PlannedResultsPage: FC = () => {
 
     const saveData = async () => {
         if(!data) return;
-        //change this later
-        const fileName = "ivt_bakalavr";
+        const id = useStore.getState().jsonData.id;
 
         const filteredData = Object.entries(data).reduce((acc: PlannedResultsData, [key, value]) => {
             if (value.competence || value.indicator || value.results) {
@@ -46,14 +47,16 @@ const PlannedResultsPage: FC = () => {
         }, {});
 
         try {
-            const response = await axios.put(`/api/update-json-value/${fileName}`, {
+            await axiosBase.put(`update-json-value/${id}`, {
                 fieldToUpdate: "competencies",
                 value: filteredData
             });
 
             updateJsonData("competencies", filteredData);
             setData(filteredData);
+            showSuccessMessage("Данные успешно сохранены");
         } catch (error) {
+            showErrorMessage("Ошибка сохранения данных");
             console.error(error);
         }
     };

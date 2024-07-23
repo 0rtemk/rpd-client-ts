@@ -1,11 +1,11 @@
 import { ChangeEvent, FC, useState } from 'react';
-import axios from 'axios';
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, ListItemText, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ShowBooks from './ShowBooks';
 import useStore from '../../../store/useStore';
 import showSuccessMessage from '../../../utils/showSuccessMessage';
 import showErrorMessage from '../../../utils/showErrorMessage';
+import { axiosBase } from '../../../fetchers/baseURL';
 
 interface AddBook {
     elementName: string;
@@ -55,10 +55,10 @@ const AddBook: FC<AddBook> = ({ elementName }) => {
         setError(false);
 
         try {
-            const response = await axios.post<BookData[]>('/api/find-books', { bookName });
+            const response = await axiosBase.post('find-books', { bookName });
             setBooksData(response.data);
         } catch (error) {
-            console.error('An error occurred while fetching books:', error);
+            console.error(error);
         }
     };
 
@@ -66,7 +66,7 @@ const AddBook: FC<AddBook> = ({ elementName }) => {
         const templateId = useStore.getState().jsonData.id;
 
         try {
-            await axios.put(`/api/update-json-value/${templateId}`, {
+            await axiosBase.put(`update-json-value/${templateId}`, {
                 fieldToUpdate: elementName,
                 value: htmlValue
             });
@@ -76,6 +76,7 @@ const AddBook: FC<AddBook> = ({ elementName }) => {
             showSuccessMessage('Данные успешно сохранены');
         } catch (error) {
             showErrorMessage('Ошибка сохранения данных');
+            console.error(error);
         }
         handleCloseDialog();
     };

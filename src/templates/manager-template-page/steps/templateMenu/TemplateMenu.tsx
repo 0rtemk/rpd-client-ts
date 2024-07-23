@@ -1,7 +1,6 @@
 import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from "@mui/material"
 import { FC, useState, MouseEvent } from "react"
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import axios from "axios";
 import useAuth from "../../../../store/useAuth";
 import showErrorMessage from "../../../../utils/showErrorMessage";
 import showSuccessMessage from "../../../../utils/showSuccessMessage";
@@ -12,6 +11,7 @@ import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import ReplyIcon from '@mui/icons-material/Reply';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import HistoryIcon from '@mui/icons-material/History';
+import { axiosBase } from "../../../../fetchers/baseURL";
 
 interface TemplateMenu {
     id: number;
@@ -43,7 +43,7 @@ const TemplateMenu: FC<TemplateMenu> = ({ id, teacher, status, fetchData }) => {
 
     const sendTemplateToTeacher = async (id: number, teacher: string) => {
         try {
-            const responce = await axios.post(`/api/send-template-to-teacher`, {
+            const responce = await axiosBase.post(`send-template-to-teacher`, {
                 id,
                 teacher,
                 userName
@@ -57,26 +57,29 @@ const TemplateMenu: FC<TemplateMenu> = ({ id, teacher, status, fetchData }) => {
             };
         } catch (error) {
             showErrorMessage("Ошибка отправки шаблона");
+            console.error(error);
         }
     }
 
     const uploadTemplateData = async () => {
         try {
-            const response = await axios.post(`/api/rpd-profile-templates`, { id });
+            const response = await axiosBase.post(`rpd-profile-templates`, { id });
             setJsonData(response.data);
             navigate("/teacher-interface");
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     }
 
     const getTemplateHistory = async () => {
         try {
-            const response = await axios.post(`/api/get-template-history`, { id });
+            const response = await axiosBase.post(`get-template-history`, { id });
             setHistory(response.data);
             setOpenDialog(true);
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     }
 

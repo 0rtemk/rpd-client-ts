@@ -1,13 +1,13 @@
 import { useState, FC, MouseEvent } from 'react';
 import { Button, Box, Menu, MenuItem, ListItemIcon, ListItemText, Typography, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import axios from 'axios';
 import useStore from '../../../store/useStore';
 import TextEditor from './TextEditor';
 import showSuccessMessage from '../../../utils/showSuccessMessage';
 import showErrorMessage from '../../../utils/showErrorMessage';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DownloadIcon from '@mui/icons-material/Download';
+import { axiosBase } from '../../../fetchers/baseURL';
 
 interface JsonChangeValue {
     elementName: string;
@@ -39,7 +39,7 @@ const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
         const templateId = useStore.getState().jsonData.id;
 
         try {
-            await axios.put(`/api/update-json-value/${templateId}`, {
+            await axiosBase.put(`update-json-value/${templateId}`, {
                 fieldToUpdate: elementName,
                 value: htmlValue
             });
@@ -49,6 +49,7 @@ const JsonChangeValue: FC<JsonChangeValue> = ({ elementName }) => {
             setChangeableValue(htmlValue);
         } catch (error) {
             showErrorMessage('Ошибка сохранения данных');
+            console.error(error);
         }
     };
 

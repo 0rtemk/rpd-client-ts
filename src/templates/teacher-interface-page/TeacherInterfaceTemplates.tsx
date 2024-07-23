@@ -1,5 +1,4 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import useAuth from "../../store/useAuth";
 import { TemplateConstructorType } from "../../types/TemplateConstructorTypes";
@@ -8,6 +7,7 @@ import Loader from "../../helperComponents/Loader";
 import useStore from "../../store/useStore";
 import TemplateStatus from "../../helperComponents/TemplateStatus";
 import showSuccessMessage from "../../utils/showSuccessMessage";
+import { axiosBase } from "../../fetchers/baseURL";
 
 interface TemplateStatusObject {
     date: string,
@@ -27,6 +27,11 @@ interface TemplateData {
     status: TemplateStatusObject;
 }
 
+export interface employedTemplateParams {
+    id: number;
+    userName: string | undefined;
+}
+
 const TeacherInterfaceTemplates: FC<TemplateConstructorType> = ({ setChoise }) => {
     const userName = useAuth.getState().userName;
     const { setJsonData } = useStore();
@@ -34,21 +39,21 @@ const TeacherInterfaceTemplates: FC<TemplateConstructorType> = ({ setChoise }) =
 
     const fetchData = async () => {
         try {
-            const response = await axios.post('/api/find-teacher-templates', {
-                userName
-            });
+            const response = await axiosBase.post('find-teacher-templates', { userName });
             setData(response.data);
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     };
 
     const employedTemplate = async (id: number) => {
         try {
-            const responce = await axios.post('/api/employed-teacher-template', {
+            const params: employedTemplateParams = {
                 id,
                 userName
-            });
+            }
+            const responce = await axiosBase.post('employed-teacher-template', { params });
             if (responce.data === "success") {
                 showSuccessMessage("Статус шаблона успешно изменен");
                 fetchData();
@@ -56,6 +61,7 @@ const TeacherInterfaceTemplates: FC<TemplateConstructorType> = ({ setChoise }) =
 
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     }
 
@@ -65,11 +71,12 @@ const TeacherInterfaceTemplates: FC<TemplateConstructorType> = ({ setChoise }) =
 
     const uploadTemplateData = async (id: number) => {
         try {
-            const response = await axios.post(`/api/rpd-profile-templates`, {id});
+            const response = await axiosBase.post(`rpd-profile-templates`, {id});
             setJsonData(response.data);
             setChoise("coverPage");
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     }
 

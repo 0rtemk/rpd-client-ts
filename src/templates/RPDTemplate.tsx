@@ -5,7 +5,7 @@ import RpdCoverPage from './rpd-template-page/RpdCoverPage';
 import { FC } from 'react';
 import { RpdListItems } from '../constants/rpdTemplateItems';
 
-const RPDTemplate: FC = () => {
+export const RPDTemplate: FC = () => {
     const [choise, setChoise] = useState<string>("coverPage");
 
     return (
@@ -47,5 +47,3 @@ const RPDTemplate: FC = () => {
         </Container>
     );
 }
-
-export default RPDTemplate;

@@ -1,10 +1,6 @@
 import { useState, useEffect, FC } from 'react';
-import axios from "axios";
 import useStore from "../../../store/useStore";
-import EditableCell from "../changeable-elements/EditableCell";
-import EditableNumber from "../changeable-elements/EditableNumber";
 import JsonChangeValue from '../changeable-elements/JsonChangeValue';
-import Loader from "../../../helperComponents/Loader";
 import {
     Box, Button, ButtonGroup, TableContainer, Table, TableHead,
     TableBody, TableRow, TableCell, Paper
@@ -12,6 +8,9 @@ import {
 import { ObjectHours, DisciplineContentData } from '../../../types/DisciplineContentPageTypes';
 import showSuccessMessage from '../../../utils/showSuccessMessage';
 import showErrorMessage from '../../../utils/showErrorMessage';
+import { EditableCell } from '../changeable-elements/EditableCell';
+import { EditableNumber } from '../changeable-elements/EditableNumber';
+import { axiosBase } from '../../../fetchers/baseURL';
 
 interface StudyLoad {
     id: string;
@@ -139,7 +138,7 @@ const DisciplineContentPage: FC = () => {
         }, {});
 
         try {
-            const response = await axios.put(`/api/update-json-value/${id}`, {
+            await axiosBase.put(`update-json-value/${id}`, {
                 fieldToUpdate: "content",
                 value: filteredData
             });
@@ -149,6 +148,7 @@ const DisciplineContentPage: FC = () => {
             showSuccessMessage("Данные успешно сохранены")
         } catch (error) {
             showErrorMessage("Ошибка сохранения данных")
+            console.error(error);
         }
     };
 

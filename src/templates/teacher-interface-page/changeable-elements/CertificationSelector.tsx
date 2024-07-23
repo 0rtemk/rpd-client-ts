@@ -1,11 +1,10 @@
-import { ChangeEvent, FC, useState } from 'react';
-import { MenuItem, Select } from '@mui/material';
+import { FC, useState } from 'react';
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import useStore from '../../../store/useStore';
-import axios from 'axios';
 import showSuccessMessage from '../../../utils/showSuccessMessage';
 import showErrorMessage from '../../../utils/showErrorMessage';
+import { axiosBase } from '../../../fetchers/baseURL';
 
-// Типы данных для ваших props
 interface SelectorProps {
     certification: string;
 }
@@ -14,12 +13,12 @@ const CertificationSelector: FC<SelectorProps> = ({ certification }) => {
     const [valueCertification, setValueCertification] = useState<string>(certification);
     const { updateJsonData } = useStore();
 
-    const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
+    const handleChange = async (event: SelectChangeEvent<string>) => {
         const templateId = useStore.getState().jsonData.id;
         const value = event.target.value;
 
         try {
-            await axios.put(`/api/update-json-value/${templateId}`, {
+            await axiosBase.put(`update-json-value/${templateId}`, {
                 fieldToUpdate: "certification",
                 value: value
             });
@@ -29,6 +28,7 @@ const CertificationSelector: FC<SelectorProps> = ({ certification }) => {
             setValueCertification(value);
         } catch (error) {
             showErrorMessage('Ошибка сохранения данных');
+            console.error(error);
         }
     };
 
@@ -37,7 +37,6 @@ const CertificationSelector: FC<SelectorProps> = ({ certification }) => {
             labelId="certification-select-label"
             id="certification-select"
             value={valueCertification}
-            //@ts-expect-error
             onChange={handleChange}
             size="small"
         >

@@ -1,9 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, FC, ChangeEvent } from 'react';
 
-function EditableCell({ value, onValueChange }) {
-    const [inputValue, setInputValue] = useState(value);
-    const [isEditing, setIsEditing] = useState(false);
-    const textAreaRef = useRef(null);
+interface EditableCellProps {
+    value: string;
+    onValueChange: (value: string) => void;
+}
+
+export const EditableCell: FC<EditableCellProps> = ({ value, onValueChange }) => {
+    const [inputValue, setInputValue] = useState<string>(value);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
     useEffect(() => {
         if (textAreaRef.current) {
@@ -17,8 +22,8 @@ function EditableCell({ value, onValueChange }) {
         setIsEditing(true);
     };
 
-    const handleInputChange = (e) => {
-        setInputValue(e.target.value);
+    const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setInputValue(event.target.value);
     };
 
     const handleInputBlur = () => {
@@ -46,5 +51,3 @@ function EditableCell({ value, onValueChange }) {
         >{value}</div>
     );
 }
-
-export default EditableCell;

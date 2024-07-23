@@ -20,12 +20,11 @@ import useAuth from '../store/useAuth';
 import useStore from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 
-const TeacherInterface: FC = () => {
+export const TeacherInterface: FC = () => {
     const userRole = useAuth.getState().userRole;
     const [choise, setChoise] = useState<string>(userRole === "rop" ? "coverPage" : "selectTemplate");
     const jsonData = useStore.getState().jsonData;
     const navigate = useNavigate();
-    console.log(jsonData);
 
     if (!Object.keys(jsonData).length) {
         if (userRole === "rop") navigate("/manager");
@@ -61,5 +60,3 @@ const TeacherInterface: FC = () => {
         </Container>
     );
 }
-
-export default TeacherInterface;

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useRef } from 'react';
 import { Button, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -7,7 +6,9 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 import Loader from '../../../helperComponents/Loader';
+import { axiosBase } from '../../../fetchers/baseURL';
 
+//@NOTE Переписать компонент
 const ChangeableCoverPage = ({ title, defaultText }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [value, setValue] = useState(null);
@@ -16,10 +17,10 @@ const ChangeableCoverPage = ({ title, defaultText }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/rpd-changeable-values?title=${title}`);
+                const response = await axiosBase.get(`rpd-changeable-values?title=${title}`);
                 setValue(response.data);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error(error);
             }
         };
 
@@ -35,7 +36,7 @@ const ChangeableCoverPage = ({ title, defaultText }) => {
         const textareaValue = textAreaRef.current.value;
       
         try {
-          const response = await axios.put(`/api/rpd-changeable-values/${value._id}`, { value: textareaValue });
+          const response = await axiosBase.put(`rpd-changeable-values/${value._id}`, { value: textareaValue });
           setValue(response.data);
         } catch (error) {
           console.error(error);

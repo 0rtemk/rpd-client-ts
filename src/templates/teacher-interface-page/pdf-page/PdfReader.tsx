@@ -2,9 +2,13 @@ import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
-export default function PdfReader({ file }) {
+interface PdfReaderProps {
+  file: Blob | MediaSource;
+}
+
+export const PdfReader: FC<PdfReaderProps> = ({ file }) => {
   const [defaultLayoutPluginInstance] = useState(defaultLayoutPlugin());
   const [fileUrl, setFileUrl] = useState('');
 

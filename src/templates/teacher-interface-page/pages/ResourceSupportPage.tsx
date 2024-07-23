@@ -11,11 +11,9 @@ const ResourceSupportPage: FC = () => {
 
             <Box component='h4' sx={{ pt: 1 }}>Основная литература</Box>
             <AddBook elementName='textbook'/>
-            {/* <JsonChangeValue elementName='textbook'/> */}
 
             <Box component='h4' sx={{ pt: 1 }}>Дополнительная литература</Box>
             <AddBook elementName='additional_textbook'/>
-            {/* <JsonChangeValue elementName='additional_textbook'/> */}
 
             <Box component='h4' sx={{ py: 1 }}>Профессиональные базы данных и информационные справочные системы</Box>
             <JsonChangeValue elementName='professional_information_resources'/>

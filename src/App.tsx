@@ -1,20 +1,17 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import Header from './templates/Header';
-import Manager from './templates/Manager';
-import RPDTemplate from './templates/RPDTemplate';
-import TeacherInterface from './templates/TeacherInterface';
 import { AuthContext } from './context/AuthContext';
 import { SnackbarProvider } from 'notistack';
-import SignIn from "./templates/SignIn";
 
-import './styles.css';
 import './styles-new.css';
 import useAuth from './store/useAuth';
+import { Manager } from './templates/Manager';
+import { RPDTemplate } from './templates/RPDTemplate';
+import { TeacherInterface } from './templates/TeacherInterface';
+import { SignIn } from './templates/SignIn';
 
 function App() {
-  //@NOTE Типизация
-  //@ts-expect-error
   const { isUserLogged } = useContext(AuthContext);
   const userRole = useAuth.getState().userRole;
 

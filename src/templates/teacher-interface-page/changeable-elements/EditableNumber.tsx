@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 
-function EditableNumber({ value, onValueChange }) {
+interface EditableNumberProps {
+    value: number;
+    onValueChange: (value: number) => void;
+}
+
+export const EditableNumber: FC<EditableNumberProps> = ({ value, onValueChange }) => {
     const [inputValue, setInputValue] = useState(value);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -8,8 +13,8 @@ function EditableNumber({ value, onValueChange }) {
         setIsEditing(true);
     };
 
-    const handleInputChange = (e) => {
-        const value = Number(e.target.value)
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = Number(event.target.value)
         if(value >= 0) setInputValue(value);
     };
 
@@ -38,5 +43,3 @@ function EditableNumber({ value, onValueChange }) {
         >{value}</div>
     );
 }
-
-export default EditableNumber;

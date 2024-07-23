@@ -1,14 +1,12 @@
 import Selectors from "./manager-template-page/Selectors";
 import TemplateConstructor from "./manager-template-page/TemplateConstructor";
 import { Container, Box } from '@mui/material';
-import { useState } from "react";
+import { FC, useState } from "react";
 import ChangeRpdTemplate from "./manager-template-page/steps/ChangeRpdTemplate";
 import CreateRpdTemplateFromYear from "./manager-template-page/steps/CreateRpdTemplateFromYear";
 import CreateRpdTemplateFrom1CExchange from "./manager-template-page/steps/CreateRpdTemplateFrom1CExchange";
 
-
-//тут вообще свалка пока
-export default function Manager() {
+export const Manager: FC = () => {
     const [choise, setChoise] = useState<string>("selectData");
 
     return (

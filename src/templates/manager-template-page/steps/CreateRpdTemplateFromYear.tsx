@@ -1,5 +1,4 @@
 import { Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import axios from "axios";
 import { FC, useEffect, useState } from "react";
 import useStore from "../../../store/useStore";
 import Loader from "../../../helperComponents/Loader";
@@ -8,6 +7,7 @@ import showErrorMessage from "../../../utils/showErrorMessage";
 import TemplateStatus from "../../../helperComponents/TemplateStatus";
 import useAuth from "../../../store/useAuth";
 import showSuccessMessage from "../../../utils/showSuccessMessage";
+import { axiosBase } from "../../../fetchers/baseURL";
 
 interface TemplateStatusObject {
     date: string,
@@ -20,6 +20,13 @@ interface TemplateData {
     disciplins_name: string;
     teacher: string;
     status: TemplateStatusObject;
+}
+
+export interface uploadTemplateDataParams {
+    year: string | undefined;
+    disciplinsName: string;
+    id: number;
+    userName: string | undefined;
 }
 
 const CreateRpdTemplateFromYear: FC<TemplateConstructorType> = ({ setChoise }) => {
@@ -40,10 +47,11 @@ const CreateRpdTemplateFromYear: FC<TemplateConstructorType> = ({ setChoise }) =
         };
 
         try {
-            const response = await axios.get('/api/find-by-criteria', { params });
+            const response = await axiosBase.get('find-by-criteria', { params });
             setData(response.data);
         } catch (error) {
             showErrorMessage('Ошибка при получении данных');
+            console.error(error);
         }
     };
 
@@ -53,12 +61,13 @@ const CreateRpdTemplateFromYear: FC<TemplateConstructorType> = ({ setChoise }) =
 
     const uploadTempllateData = async (disciplinsName: string, id: number) => {
         try {
-            const response = await axios.post('/api/find-or-create-profile-template', {
+            const params: uploadTemplateDataParams = {
                 year: createByCriteria.year,
                 disciplinsName,
                 id,
                 userName
-            });
+            }
+            const response = await axiosBase.post('find-or-create-profile-template', { params });
 
             if (response.data.status === "record exists") showErrorMessage("Ошибка. Шаблон с текущими данными уже существует");
             if (response.data === "template created") {
@@ -67,6 +76,7 @@ const CreateRpdTemplateFromYear: FC<TemplateConstructorType> = ({ setChoise }) =
             };
         } catch (error) {
             showErrorMessage('Ошибка создания шаблона');
+            console.error(error);
         }
     }
 

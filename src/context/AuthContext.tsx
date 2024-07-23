@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, ReactNode, FC } from "react";
 import axios from "axios";
 import inMemoryJWT from "../utils/inMemoryJWT";
 import config from "../config";
@@ -30,14 +30,27 @@ ResourceClient.interceptors.request.use(
   }
 );
 
-export const AuthContext = createContext({});
+interface dataProps {
+  login: string;
+  password: string;
+}
 
-//@NOTE Типизация
-//@ts-expect-error
-const AuthProvider = ({ children }) => {
-  const [isAppReady, setIsAppReady] = useState(false);
-  const [isUserLogged, setIsUserLogged] = useState(false);
-  const [data, setData] = useState();
+interface AuthContextProps {
+  data?: dataProps | undefined;
+  handleFetchProtected?: () => void;
+  handleSignUp?: (data: dataProps) => void;
+  handleSignIn?: (data: dataProps) => void;
+  handleLogOut?: () => void;
+  isAppReady?: boolean;
+  isUserLogged?: boolean;
+}
+
+export const AuthContext = createContext<AuthContextProps>({});
+
+export const AuthProvider: FC<{children: ReactNode}> = ({ children }) => {
+  const [isAppReady, setIsAppReady] = useState<boolean>(false);
+  const [isUserLogged, setIsUserLogged] = useState<boolean>(false);
+  const [data, setData] = useState<dataProps>();
   const { updateAbility, updateUserName } = useAuth();
 
   const handleFetchProtected = () => {
@@ -60,9 +73,7 @@ const AuthProvider = ({ children }) => {
       .catch((error) => showErrorMessage(error.response.data.error));
   };
 
-  //@NOTE Типизация
-  //@ts-expect-error
-  const handleSignUp = (data) => {
+  const handleSignUp = (data: dataProps) => {
     AuthClient.post("/sign-up", data)
       .then((res) => {
         const { accessToken, accessTokenExpiration } = res.data;
@@ -73,9 +84,7 @@ const AuthProvider = ({ children }) => {
       .catch((error) => showErrorMessage(error.response.data.error));
   };
 
-  //@NOTE Типизация
-  //@ts-expect-error
-  const handleSignIn = (data) => {
+  const handleSignIn = (data: dataProps) => {
     AuthClient.post("/sign-in", data)
       .then((res) => {
         const { fullname, role, accessToken, accessTokenExpiration } = res.data;
@@ -106,9 +115,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    //@NOTE Типизация
-    //@ts-expect-error
-    const handlePersistedLogOut = (event) => {
+    const handlePersistedLogOut = (event: StorageEvent) => {
       if (event.key === config.LOGOUT_STORAGE_KEY) {
         inMemoryJWT.deleteToken();
         setIsUserLogged(false);
@@ -144,5 +151,3 @@ const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-export default AuthProvider;

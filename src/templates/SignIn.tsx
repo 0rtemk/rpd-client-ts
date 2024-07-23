@@ -1,14 +1,12 @@
 import { FormProvider, useForm } from "react-hook-form";
-import { useContext, useState, MouseEvent } from "react";
+import { useContext, useState, MouseEvent, FC } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signInSchema } from "../utils/validtionSchemas";
-import { Box, Button, Container, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
+import { Box, Button, Container, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export default function SignIn() {
-  //@NOTE Типизация
-  //@ts-expect-error
+export const SignIn: FC = () => {
   const { handleSignIn } = useContext(AuthContext);
 
   const formMethods = useForm({ resolver: yupResolver(signInSchema) });

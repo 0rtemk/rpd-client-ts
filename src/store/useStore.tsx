@@ -6,13 +6,19 @@ interface JsonData {
   [key: string]: JsonValue;
 }
 
-interface SelectedTemplateData {
+export interface SelectedTemplateData {
   faculty: string | undefined;
   levelEducation: string | undefined;
   directionOfStudy: string | undefined;
   profile: string | undefined;
   formEducation: string | undefined;
   year: string | undefined;
+}
+
+export interface SelectTeacherParams {
+  id: number;
+  teacher: string;
+  userName: string | undefined;
 }
 
 interface CreateByCriteria {

@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { EditorState, ContentState } from 'draft-js';
+import { EditorState } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
 import { stateFromHTML } from 'draft-js-import-html';
 import {
